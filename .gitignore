@@ -1,0 +1,36 @@
+# Maven
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.restoreBackup
+.flattened-pom.xml
+dependency-reduced-pom.xml
+build.log
+release.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# IDE
+.idea/
+*.iml
+*.iws
+.project
+.settings/
+.classpath
+.factorypath
+.vscode/
+
+# Docker
+.docker/
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Spring Boot
+*.log
+*.gz
+
+# Gemini Artifacts
+.gemini/
+.agent/
