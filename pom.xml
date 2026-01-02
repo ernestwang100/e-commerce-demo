@@ -14,7 +14,7 @@
 	<name>shopping-app</name>
 	<description>Online Shopping Application Backend</description>
 	<properties>
-		<java.version>21</java.version>
+		<java.version>17</java.version>
 	</properties>
 	<dependencies>
 		<dependency>
