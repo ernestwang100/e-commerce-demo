@@ -11,6 +11,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class AdminStatsResponse {
+    private Long totalSoldItems;
     private List<ProductStatDto> mostPopular;
     private List<ProductStatDto> mostProfitable;
 }

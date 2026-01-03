@@ -41,6 +41,11 @@ public class StatsServiceImpl implements StatsService {
 
     @Override
     public AdminStatsResponse getAdminStats() {
+        // Total successfully sold items (from Completed orders only)
+        Long totalSoldItems = entityManager.createQuery(
+                "SELECT COALESCE(SUM(i.quantity), 0) FROM OrderItem i WHERE i.order.orderStatus = 'Completed'", Long.class)
+                .getSingleResult();
+
         // Top 3 most popular products (by total quantity sold)
         List<Object[]> popularData = entityManager.createQuery(
                 "SELECT i.product.name, SUM(CAST(i.quantity AS bigdecimal)) FROM OrderItem i GROUP BY i.product.name ORDER BY SUM(i.quantity) DESC", Object[].class)
@@ -63,6 +68,7 @@ public class StatsServiceImpl implements StatsService {
                 .collect(Collectors.toList());
 
         return AdminStatsResponse.builder()
+                .totalSoldItems(totalSoldItems)
                 .mostPopular(mostPopular)
                 .mostProfitable(mostProfitable)
                 .build();
