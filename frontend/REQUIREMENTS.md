@@ -108,7 +108,7 @@ interface OrderItem {
 
 ## API Endpoints Required
 
-Base URL: `http://localhost:8080` (configurable via `environment.ts`)
+Base URL: `http://localhost:7070` (configurable via `environment.ts`)
 
 ### Auth
 | Method | Endpoint | Description |
@@ -171,7 +171,7 @@ Base URL: `http://localhost:8080` (configurable via `environment.ts`)
    ```typescript
    export const environment = {
      production: false,
-     apiUrl: 'http://localhost:8080'
+     apiUrl: 'http://localhost:7070'
    };
    ```
 
