@@ -1,1 +1,36 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <h1>Featured Products</h1>
+
+  <div *ngIf="loading" class="loading-spinner">
+    Loading products...
+  </div>
+
+  <div *ngIf="error" class="error-message">
+    {{ error }}
+  </div>
+
+  <mat-grid-list cols="4" rowHeight="400px" gutterSize="20px" *ngIf="!loading && !error">
+    <mat-grid-tile *ngFor="let product of products">
+      <mat-card class="product-card">
+        <mat-card-header>
+          <mat-card-title>{{ product.name }}</mat-card-title>
+        </mat-card-header>
+        <div class="product-image">
+          <mat-icon inline="false">inventory_2</mat-icon>
+        </div>
+        <mat-card-content>
+          <p class="description">{{ product.description }}</p>
+          <p class="price">{{ product.retailPrice | currency }}</p>
+        </mat-card-content>
+        <mat-card-actions>
+          <button mat-button color="primary">Details</button>
+          <button mat-raised-button color="accent">Add to Cart</button>
+        </mat-card-actions>
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+
+  <div *ngIf="!loading && products.length === 0" class="no-products">
+    No products found.
+  </div>
+</div>
