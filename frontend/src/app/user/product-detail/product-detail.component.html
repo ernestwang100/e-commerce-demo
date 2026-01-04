@@ -1,0 +1,49 @@
+<div class="product-detail-container">
+  <button mat-button (click)="goBack()" class="back-button">
+    <mat-icon>arrow_back</mat-icon> Back to Products
+  </button>
+
+  <div *ngIf="loading" class="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <mat-icon>error</mat-icon>
+    {{ error }}
+  </div>
+
+  <div *ngIf="product && !loading" class="product-content">
+    <div class="product-image">
+      <div class="image-placeholder">
+        <mat-icon>inventory_2</mat-icon>
+      </div>
+    </div>
+
+    <div class="product-info">
+      <h1>{{ product.name }}</h1>
+      <p class="description">{{ product.description }}</p>
+      
+      <div class="price">${{ product.retailPrice | number:'1.2-2' }}</div>
+
+      <div class="quantity-controls">
+        <label>Quantity:</label>
+        <button mat-icon-button (click)="decrementQuantity()" [disabled]="quantity <= 1">
+          <mat-icon>remove</mat-icon>
+        </button>
+        <input type="number" [(ngModel)]="quantity" min="1" class="quantity-input">
+        <button mat-icon-button (click)="incrementQuantity()">
+          <mat-icon>add</mat-icon>
+        </button>
+      </div>
+
+      <div class="actions">
+        <button mat-raised-button color="primary" (click)="addToCart()">
+          <mat-icon>shopping_cart</mat-icon> Add to Cart
+        </button>
+        <button mat-stroked-button (click)="addToWatchlist()">
+          <mat-icon>favorite_border</mat-icon> Add to Watchlist
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

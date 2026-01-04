@@ -23,8 +23,8 @@
           <p class="price">{{ product.retailPrice | currency }}</p>
         </mat-card-content>
         <mat-card-actions>
-          <button mat-button color="primary">Details</button>
-          <button mat-raised-button color="accent">Add to Cart</button>
+          <button mat-button color="primary" (click)="viewDetails(product)">Details</button>
+          <button mat-raised-button color="accent" (click)="addToCart(product)">Add to Cart</button>
         </mat-card-actions>
       </mat-card>
     </mat-grid-tile>

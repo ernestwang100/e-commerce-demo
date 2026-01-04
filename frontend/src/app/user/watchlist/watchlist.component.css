@@ -1,0 +1,116 @@
+.watchlist-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+h1 {
+    font-size: 2rem;
+    color: #1a1a2e;
+    margin-bottom: 24px;
+}
+
+.loading,
+.error,
+.empty {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    gap: 16px;
+    color: #666;
+}
+
+.error {
+    color: #f44336;
+}
+
+.empty mat-icon,
+.error mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+}
+
+.watchlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+}
+
+.watchlist-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.watchlist-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.card-image {
+    height: 180px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+}
+
+.card-image mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+mat-card-content h3 {
+    margin: 16px 0 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    color: #1a1a2e;
+}
+
+mat-card-content h3:hover {
+    color: #667eea;
+}
+
+.description {
+    color: #666;
+    font-size: 0.9rem;
+    margin-bottom: 12px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    line-clamp: 2;
+    overflow: hidden;
+}
+
+.price-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.price {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.in-stock {
+    background-color: #4caf50 !important;
+    color: white !important;
+}
+
+.out-of-stock {
+    background-color: #f44336 !important;
+    color: white !important;
+}
+
+mat-card-actions {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 16px 16px;
+}

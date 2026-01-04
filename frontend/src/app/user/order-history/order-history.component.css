@@ -1,0 +1,132 @@
+.order-history-container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+h1 {
+    font-size: 2rem;
+    color: #1a1a2e;
+    margin-bottom: 24px;
+}
+
+.loading,
+.error,
+.empty {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 300px;
+    gap: 16px;
+    color: #666;
+}
+
+.error {
+    color: #f44336;
+}
+
+.empty mat-icon,
+.error mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+}
+
+.orders-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.order-card {
+    transition: box-shadow 0.2s;
+}
+
+.order-card:hover {
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+mat-card-header {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+mat-card-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.order-summary {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.item-count {
+    color: #666;
+}
+
+.order-total {
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #667eea;
+}
+
+.order-details {
+    padding-top: 16px;
+    border-top: 1px solid #eee;
+    margin-top: 16px;
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.items-table th,
+.items-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.items-table th {
+    background: #f8f9fa;
+    font-weight: 500;
+}
+
+.items-table tfoot td {
+    background: #f8f9fa;
+    border-bottom: none;
+}
+
+.order-actions {
+    margin-top: 16px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+/* Status Chips */
+.status-completed {
+    background-color: #4caf50 !important;
+    color: white !important;
+}
+
+.status-cancelled {
+    background-color: #f44336 !important;
+    color: white !important;
+}
+
+.status-processing {
+    background-color: #2196f3 !important;
+    color: white !important;
+}
+
+.status-pending {
+    background-color: #ff9800 !important;
+    color: white !important;
+}

@@ -1,0 +1,50 @@
+<div class="watchlist-container">
+  <h1>My Watchlist</h1>
+
+  <div *ngIf="loading" class="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <mat-icon>error</mat-icon>
+    {{ error }}
+  </div>
+
+  <div *ngIf="!loading && items.length === 0 && !error" class="empty">
+    <mat-icon>favorite_border</mat-icon>
+    <p>Your watchlist is empty</p>
+    <button mat-raised-button color="primary" (click)="continueShopping()">
+      Browse Products
+    </button>
+  </div>
+
+  <div *ngIf="!loading && items.length > 0" class="watchlist-grid">
+    <mat-card *ngFor="let item of items" class="watchlist-card">
+      <div class="card-image" (click)="viewProduct(item.productId)">
+        <mat-icon>inventory_2</mat-icon>
+      </div>
+      <mat-card-content>
+        <h3 (click)="viewProduct(item.productId)">{{ item.productName }}</h3>
+        <p class="description">{{ item.description }}</p>
+        <div class="price-row">
+          <span class="price">${{ item.retailPrice | number:'1.2-2' }}</span>
+          <mat-chip-list>
+            <mat-chip [ngClass]="item.inStock ? 'in-stock' : 'out-of-stock'">
+              {{ item.inStock ? 'In Stock' : 'Out of Stock' }}
+            </mat-chip>
+          </mat-chip-list>
+        </div>
+      </mat-card-content>
+      <mat-card-actions>
+        <button mat-raised-button color="primary" 
+                (click)="addToCart(item)" 
+                [disabled]="!item.inStock">
+          <mat-icon>shopping_cart</mat-icon> Add to Cart
+        </button>
+        <button mat-icon-button color="warn" (click)="removeFromWatchlist(item.productId)">
+          <mat-icon>delete</mat-icon>
+        </button>
+      </mat-card-actions>
+    </mat-card>
+  </div>
+</div>

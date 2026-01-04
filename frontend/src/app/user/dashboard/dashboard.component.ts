@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { ProductService } from '../../services/product.service';
+import { CartService } from '../../services/cart.service';
 import { Product } from '../../models/product.model';
 import { first } from 'rxjs/operators';
 
@@ -13,7 +15,11 @@ export class DashboardComponent implements OnInit {
   loading = false;
   error = '';
 
-  constructor(private productService: ProductService) { }
+  constructor(
+    private productService: ProductService,
+    private cartService: CartService,
+    private router: Router
+  ) { }
 
   ngOnInit(): void {
     this.loading = true;
@@ -29,5 +35,13 @@ export class DashboardComponent implements OnInit {
           this.loading = false;
         }
       });
+  }
+
+  viewDetails(product: Product): void {
+    this.router.navigate(['/user/product', product.id]);
+  }
+
+  addToCart(product: Product): void {
+    this.cartService.addToCart(product, 1);
   }
 }
