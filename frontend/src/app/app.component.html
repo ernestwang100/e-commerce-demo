@@ -7,6 +7,15 @@
     <button mat-button routerLink="/auth/register">Register</button>
   </ng-container>
   <ng-template #loggedIn>
+    <button mat-button routerLink="/user/cart">
+      <mat-icon [matBadge]="cartCount" [matBadgeHidden]="cartCount === 0" matBadgeColor="accent">shopping_cart</mat-icon>
+      Cart
+    </button>
+    <button mat-button routerLink="/user/orders">Orders</button>
+    <button mat-button routerLink="/user/watchlist">Watchlist</button>
+    <button mat-button routerLink="/admin" *ngIf="isAdmin">
+      <mat-icon>admin_panel_settings</mat-icon> Admin
+    </button>
     <button mat-button (click)="logout()">Logout</button>
   </ng-template>
 </mat-toolbar>
@@ -14,3 +23,4 @@
 <div class="container">
   <router-outlet></router-outlet>
 </div>
+
