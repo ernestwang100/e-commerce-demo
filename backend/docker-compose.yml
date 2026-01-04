@@ -6,8 +6,8 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: root
       MYSQL_DATABASE: shopping_app
-      MYSQL_USER: ernest
-      MYSQL_PASSWORD: StrongPass123!
+      MYSQL_USER: shopuser
+      MYSQL_PASSWORD: shoppass
     ports:
       - "3307:3306"
     volumes:

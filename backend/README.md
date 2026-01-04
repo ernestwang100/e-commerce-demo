@@ -1,0 +1,65 @@
+# Online Shopping Application - Backend
+
+Spring Boot 3.2 RESTful API for the Online Shopping Application.
+
+## Prerequisites
+- Java 17
+- Maven
+- Docker (for MySQL)
+
+## Database Setup
+```bash
+cd backend
+docker-compose up -d
+```
+This starts MySQL 8.0 on port 3307.
+
+## Running the Application
+
+**Important:** The application uses Jasypt for password encryption. You must provide the encryption password.
+
+### PowerShell
+```powershell
+$env:JASYPT_ENCRYPTOR_PASSWORD='commerce'; mvn spring-boot:run
+```
+
+### Bash / Linux / Mac
+```bash
+JASYPT_ENCRYPTOR_PASSWORD=commerce mvn spring-boot:run
+```
+
+### Alternative (JVM argument)
+```bash
+mvn spring-boot:run -Djasypt.encryptor.password=commerce
+```
+
+The application runs on **http://localhost:7070**
+
+## API Endpoints
+
+### Authentication
+- `POST /auth/register` - Register new user
+- `POST /auth/login` - Login and get JWT token
+
+### User Endpoints (requires USER role)
+- `GET /user/products` - List all in-stock products
+- `GET /user/products/{id}` - Get product details
+- `POST /user/orders` - Place an order
+- `GET /user/orders` - Get user's order history
+
+### Admin Endpoints (requires ADMIN role)
+- `GET /admin/products` - List all products (with wholesale price)
+- `POST /admin/products` - Add new product
+- `PUT /admin/products/{id}` - Update product
+- `GET /admin/orders` - List all orders
+- `PATCH /admin/orders/{id}/complete` - Complete an order
+- `PATCH /admin/orders/{id}/cancel` - Cancel an order
+
+## Re-encrypting Secrets
+
+If you need to change the Jasypt password or re-encrypt values:
+
+1. Update `JasyptEncryptionTest.java` with new password
+2. Run: `mvn test -Dtest=JasyptEncryptionTest`
+3. Copy encrypted values from `target/encrypted_values.txt`
+4. Update `application.properties` with new `ENC()` values
