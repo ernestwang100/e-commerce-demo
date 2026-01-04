@@ -21,7 +21,7 @@ export class AuthService {
   }
 
   login(request: LoginRequest): Observable<User> {
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/login`, request)
+    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, request)
       .pipe(map(response => {
         const user: User = {
           username: response.username,
@@ -35,7 +35,7 @@ export class AuthService {
   }
 
   register(request: RegisterRequest): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/signup`, request);
+    return this.http.post(`${environment.apiUrl}/auth/register`, request);
   }
 
   logout() {
