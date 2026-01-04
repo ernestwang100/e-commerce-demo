@@ -1,0 +1,117 @@
+import { Component, OnInit } from '@angular/core';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Product, ProductRequest } from '../../models/product.model';
+import { ProductService } from '../../services/product.service';
+
+@Component({
+  selector: 'app-product-management',
+  templateUrl: './product-management.component.html',
+  styleUrls: ['./product-management.component.css']
+})
+export class ProductManagementComponent implements OnInit {
+  products: Product[] = [];
+  displayedColumns = ['id', 'name', 'description', 'retailPrice', 'wholesalePrice', 'quantity', 'actions'];
+  loading = true;
+  showForm = false;
+  editingProduct: Product | null = null;
+  productForm: FormGroup;
+  submitting = false;
+
+  constructor(
+    private productService: ProductService,
+    private fb: FormBuilder,
+    private snackBar: MatSnackBar
+  ) {
+    this.productForm = this.fb.group({
+      name: ['', [Validators.required, Validators.minLength(2)]],
+      description: ['', [Validators.required]],
+      wholesalePrice: [0, [Validators.required, Validators.min(0)]],
+      retailPrice: [0, [Validators.required, Validators.min(0)]],
+      quantity: [0, [Validators.required, Validators.min(0)]]
+    });
+  }
+
+  ngOnInit(): void {
+    this.loadProducts();
+  }
+
+  loadProducts(): void {
+    this.loading = true;
+    this.productService.getAllProducts().subscribe({
+      next: (products) => {
+        this.products = products;
+        this.loading = false;
+      },
+      error: () => {
+        this.snackBar.open('Failed to load products', 'Close', { duration: 3000 });
+        this.loading = false;
+      }
+    });
+  }
+
+  openAddForm(): void {
+    this.editingProduct = null;
+    this.productForm.reset({ wholesalePrice: 0, retailPrice: 0, quantity: 0 });
+    this.showForm = true;
+  }
+
+  openEditForm(product: Product): void {
+    this.editingProduct = product;
+    this.productForm.patchValue({
+      name: product.name,
+      description: product.description,
+      wholesalePrice: product.wholesalePrice || 0,
+      retailPrice: product.retailPrice,
+      quantity: product.quantity || 0
+    });
+    this.showForm = true;
+  }
+
+  closeForm(): void {
+    this.showForm = false;
+    this.editingProduct = null;
+  }
+
+  submitForm(): void {
+    if (this.productForm.invalid) return;
+
+    this.submitting = true;
+    const request: ProductRequest = this.productForm.value;
+
+    const action = this.editingProduct
+      ? this.productService.updateProduct(this.editingProduct.id, request)
+      : this.productService.createProduct(request);
+
+    action.subscribe({
+      next: () => {
+        this.snackBar.open(
+          this.editingProduct ? 'Product updated' : 'Product created',
+          'Close',
+          { duration: 3000 }
+        );
+        this.closeForm();
+        this.loadProducts();
+        this.submitting = false;
+      },
+      error: () => {
+        this.snackBar.open('Operation failed', 'Close', { duration: 3000 });
+        this.submitting = false;
+      }
+    });
+  }
+
+  deleteProduct(product: Product): void {
+    if (confirm(`Delete "${product.name}"?`)) {
+      this.productService.deleteProduct(product.id).subscribe({
+        next: () => {
+          this.snackBar.open('Product deleted', 'Close', { duration: 3000 });
+          this.loadProducts();
+        },
+        error: () => {
+          this.snackBar.open('Failed to delete', 'Close', { duration: 3000 });
+        }
+      });
+    }
+  }
+}

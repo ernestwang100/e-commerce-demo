@@ -1,0 +1,178 @@
+.admin-dashboard {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+h1 {
+    font-size: 2rem;
+    color: #1a1a2e;
+    margin-bottom: 24px;
+}
+
+.quick-actions {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+}
+
+.quick-actions button {
+    padding: 12px 24px;
+}
+
+.error {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #f44336;
+    margin-bottom: 24px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 24px;
+    margin-bottom: 32px;
+}
+
+.stat-card {
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.stat-card mat-card-header {
+    margin-bottom: 16px;
+}
+
+.stat-card mat-icon[mat-card-avatar] {
+    font-size: 32px;
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: white;
+}
+
+.total-sold mat-icon[mat-card-avatar] {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+}
+
+.popular mat-icon[mat-card-avatar] {
+    background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);
+}
+
+.profitable mat-icon[mat-card-avatar] {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+}
+
+.stat-value {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #667eea;
+    text-align: center;
+    padding: 24px 0;
+}
+
+.stat-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.stat-list li {
+    display: flex;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.stat-list li:last-child {
+    border-bottom: none;
+}
+
+.stat-list .rank {
+    width: 40px;
+    font-weight: 600;
+    color: #667eea;
+}
+
+.stat-list .name {
+    flex: 1;
+    font-weight: 500;
+}
+
+.stat-list .value {
+    color: #666;
+}
+
+.stat-list .no-data {
+    color: #999;
+    font-style: italic;
+    justify-content: center;
+}
+
+.loading-inline {
+    display: flex;
+    justify-content: center;
+    padding: 24px;
+}
+
+.recent-orders-card mat-card-header {
+    display: flex;
+    align-items: center;
+}
+
+.view-all {
+    margin-left: auto !important;
+}
+
+.orders-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 16px;
+}
+
+.orders-table th,
+.orders-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.orders-table th {
+    background: #f8f9fa;
+    font-weight: 500;
+}
+
+.no-data {
+    text-align: center;
+    color: #999;
+    font-style: italic;
+}
+
+/* Status Chips */
+.status-completed {
+    background-color: #4caf50 !important;
+    color: white !important;
+}
+
+.status-cancelled {
+    background-color: #f44336 !important;
+    color: white !important;
+}
+
+.status-processing {
+    background-color: #2196f3 !important;
+    color: white !important;
+}
+
+.status-pending {
+    background-color: #ff9800 !important;
+    color: white !important;
+}

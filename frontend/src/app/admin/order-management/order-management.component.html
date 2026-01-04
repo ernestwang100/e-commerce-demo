@@ -1,0 +1,117 @@
+<div class="order-management">
+  <h1>Order Management</h1>
+
+  <div *ngIf="loading" class="loading">
+    <mat-spinner diameter="50"></mat-spinner>
+  </div>
+
+  <table *ngIf="!loading && orders.length > 0" mat-table [dataSource]="orders" class="orders-table">
+    <ng-container matColumnDef="orderId">
+      <th mat-header-cell *matHeaderCellDef>Order ID</th>
+      <td mat-cell *matCellDef="let order">
+        <button mat-button (click)="toggleExpand(order.orderId)">
+          #{{ order.orderId }}
+          <mat-icon>{{ expandedOrderId === order.orderId ? 'expand_less' : 'expand_more' }}</mat-icon>
+        </button>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="datePlaced">
+      <th mat-header-cell *matHeaderCellDef>Date</th>
+      <td mat-cell *matCellDef="let order">{{ order.datePlaced | date:'medium' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="items">
+      <th mat-header-cell *matHeaderCellDef>Items</th>
+      <td mat-cell *matCellDef="let order">{{ order.items.length }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="total">
+      <th mat-header-cell *matHeaderCellDef>Total</th>
+      <td mat-cell *matCellDef="let order">${{ getOrderTotal(order) | number:'1.2-2' }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef>Status</th>
+      <td mat-cell *matCellDef="let order">
+        <mat-chip-list>
+          <mat-chip [ngClass]="getStatusClass(order.orderStatus)">
+            {{ order.orderStatus }}
+          </mat-chip>
+        </mat-chip-list>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="actions">
+      <th mat-header-cell *matHeaderCellDef>Actions</th>
+      <td mat-cell *matCellDef="let order">
+        <ng-container *ngIf="order.orderStatus?.toLowerCase() === 'processing'">
+          <button mat-icon-button color="primary" (click)="completeOrder(order.orderId)" matTooltip="Complete">
+            <mat-icon>check_circle</mat-icon>
+          </button>
+          <button mat-icon-button color="warn" (click)="cancelOrder(order.orderId)" matTooltip="Cancel">
+            <mat-icon>cancel</mat-icon>
+          </button>
+        </ng-container>
+        <span *ngIf="order.orderStatus?.toLowerCase() !== 'processing'" class="no-actions">-</span>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"
+        [class.expanded]="expandedOrderId === row.orderId"></tr>
+  </table>
+
+  <!-- Expanded Order Details -->
+  <div *ngIf="expandedOrderId" class="order-details">
+    <ng-container *ngFor="let order of orders">
+      <mat-card *ngIf="order.orderId === expandedOrderId">
+        <mat-card-header>
+          <mat-card-title>Order #{{ order.orderId }} Details</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <table class="items-table">
+            <thead>
+              <tr>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Quantity</th>
+                <th>Subtotal</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let item of order.items">
+                <td>{{ item.productName }}</td>
+                <td>${{ item.purchasedPrice | number:'1.2-2' }}</td>
+                <td>{{ item.quantity }}</td>
+                <td>${{ (item.purchasedPrice * item.quantity) | number:'1.2-2' }}</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td colspan="3"><strong>Total</strong></td>
+                <td><strong>${{ getOrderTotal(order) | number:'1.2-2' }}</strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        </mat-card-content>
+      </mat-card>
+    </ng-container>
+  </div>
+
+  <!-- Pagination -->
+  <div *ngIf="!loading && orders.length > 0" class="pagination">
+    <button mat-button [disabled]="currentPage === 1" (click)="prevPage()">
+      <mat-icon>chevron_left</mat-icon> Previous
+    </button>
+    <span>Page {{ currentPage }}</span>
+    <button mat-button [disabled]="orders.length < 10" (click)="nextPage()">
+      Next <mat-icon>chevron_right</mat-icon>
+    </button>
+  </div>
+
+  <div *ngIf="!loading && orders.length === 0" class="no-data">
+    <mat-icon>receipt_long</mat-icon>
+    <p>No orders found</p>
+  </div>
+</div>

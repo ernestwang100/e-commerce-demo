@@ -1,0 +1,117 @@
+<div class="admin-dashboard">
+  <h1>Admin Dashboard</h1>
+
+  <div class="quick-actions">
+    <button mat-raised-button color="primary" (click)="goToProducts()">
+      <mat-icon>inventory</mat-icon> Manage Products
+    </button>
+    <button mat-raised-button color="accent" (click)="goToOrders()">
+      <mat-icon>receipt_long</mat-icon> Manage Orders
+    </button>
+  </div>
+
+  <div *ngIf="error" class="error">
+    <mat-icon>error</mat-icon> {{ error }}
+  </div>
+
+  <!-- Stats Cards -->
+  <div class="stats-grid">
+    <mat-card class="stat-card total-sold">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>shopping_bag</mat-icon>
+        <mat-card-title>Total Items Sold</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="loadingStats" class="loading-inline">
+          <mat-spinner diameter="30"></mat-spinner>
+        </div>
+        <div *ngIf="!loadingStats && stats" class="stat-value">
+          {{ stats.totalSoldItems }}
+        </div>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card popular">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>trending_up</mat-icon>
+        <mat-card-title>Most Popular Products</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="loadingStats" class="loading-inline">
+          <mat-spinner diameter="30"></mat-spinner>
+        </div>
+        <ul *ngIf="!loadingStats && stats" class="stat-list">
+          <li *ngFor="let item of stats.mostPopular; let i = index">
+            <span class="rank">#{{ i + 1 }}</span>
+            <span class="name">{{ item.name }}</span>
+            <span class="value">{{ item.value }} sold</span>
+          </li>
+          <li *ngIf="stats.mostPopular.length === 0" class="no-data">No data available</li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+
+    <mat-card class="stat-card profitable">
+      <mat-card-header>
+        <mat-icon mat-card-avatar>attach_money</mat-icon>
+        <mat-card-title>Most Profitable Products</mat-card-title>
+      </mat-card-header>
+      <mat-card-content>
+        <div *ngIf="loadingStats" class="loading-inline">
+          <mat-spinner diameter="30"></mat-spinner>
+        </div>
+        <ul *ngIf="!loadingStats && stats" class="stat-list">
+          <li *ngFor="let item of stats.mostProfitable; let i = index">
+            <span class="rank">#{{ i + 1 }}</span>
+            <span class="name">{{ item.name }}</span>
+            <span class="value">${{ item.value | number:'1.2-2' }}</span>
+          </li>
+          <li *ngIf="stats.mostProfitable.length === 0" class="no-data">No data available</li>
+        </ul>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Recent Orders -->
+  <mat-card class="recent-orders-card">
+    <mat-card-header>
+      <mat-icon mat-card-avatar>receipt</mat-icon>
+      <mat-card-title>Recent Orders</mat-card-title>
+      <button mat-button color="primary" (click)="goToOrders()" class="view-all">
+        View All <mat-icon>arrow_forward</mat-icon>
+      </button>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="loadingOrders" class="loading-inline">
+        <mat-spinner diameter="30"></mat-spinner>
+      </div>
+      <table *ngIf="!loadingOrders" class="orders-table">
+        <thead>
+          <tr>
+            <th>Order ID</th>
+            <th>Date</th>
+            <th>Items</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let order of recentOrders">
+            <td>#{{ order.orderId }}</td>
+            <td>{{ order.datePlaced | date:'short' }}</td>
+            <td>{{ order.items.length }}</td>
+            <td>
+              <mat-chip-list>
+                <mat-chip [ngClass]="getStatusClass(order.orderStatus)">
+                  {{ order.orderStatus }}
+                </mat-chip>
+              </mat-chip-list>
+            </td>
+          </tr>
+          <tr *ngIf="recentOrders.length === 0">
+            <td colspan="4" class="no-data">No orders yet</td>
+          </tr>
+        </tbody>
+      </table>
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,107 @@
+.order-management {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 24px;
+}
+
+h1 {
+    font-size: 2rem;
+    color: #1a1a2e;
+    margin-bottom: 24px;
+}
+
+.loading {
+    display: flex;
+    justify-content: center;
+    padding: 48px;
+}
+
+.orders-table {
+    width: 100%;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.expanded {
+    background-color: #f8f9fa;
+}
+
+.order-details {
+    margin-top: 16px;
+}
+
+.order-details mat-card {
+    margin-bottom: 16px;
+}
+
+.items-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.items-table th,
+.items-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #eee;
+}
+
+.items-table th {
+    background: #f8f9fa;
+    font-weight: 500;
+}
+
+.items-table tfoot td {
+    background: #f8f9fa;
+    border-bottom: none;
+}
+
+.no-actions {
+    color: #999;
+}
+
+.pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 16px;
+    margin-top: 24px;
+}
+
+.no-data {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 48px;
+    color: #666;
+}
+
+.no-data mat-icon {
+    font-size: 64px;
+    width: 64px;
+    height: 64px;
+    color: #ccc;
+    margin-bottom: 16px;
+}
+
+/* Status Chips */
+.status-completed {
+    background-color: #4caf50 !important;
+    color: white !important;
+}
+
+.status-cancelled {
+    background-color: #f44336 !important;
+    color: white !important;
+}
+
+.status-processing {
+    background-color: #2196f3 !important;
+    color: white !important;
+}
+
+.status-pending {
+    background-color: #ff9800 !important;
+    color: white !important;
+}
