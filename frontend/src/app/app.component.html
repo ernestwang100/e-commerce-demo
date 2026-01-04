@@ -1,1 +1,16 @@
-<router-outlet></router-outlet>
+<mat-toolbar color="primary">
+  <span>SuperDuper Mart</span>
+  <span class="spacer"></span>
+  <button mat-button routerLink="/user">Shop</button>
+  <ng-container *ngIf="!(authService.user | async); else loggedIn">
+    <button mat-button routerLink="/auth/login">Login</button>
+    <button mat-button routerLink="/auth/register">Register</button>
+  </ng-container>
+  <ng-template #loggedIn>
+    <button mat-button (click)="logout()">Logout</button>
+  </ng-template>
+</mat-toolbar>
+
+<div class="container">
+  <router-outlet></router-outlet>
+</div>
