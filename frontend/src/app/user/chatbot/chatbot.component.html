@@ -1,0 +1,74 @@
+<!-- Only show when user is logged in -->
+<ng-container *ngIf="authService.user | async">
+  <!-- Floating Chat Button -->
+  <button class="chat-toggle-btn" (click)="toggleChat()" [class.open]="isOpen">
+    <span class="chat-icon" *ngIf="!isOpen">💬</span>
+    <span class="close-icon" *ngIf="isOpen">✕</span>
+  </button>
+
+  <!-- Chat Window -->
+  <div class="chat-window" [class.open]="isOpen">
+    <!-- Header -->
+    <div class="chat-header">
+      <div class="header-info">
+        <div class="bot-avatar">🤖</div>
+        <div class="header-text">
+          <h4>SuperDuper Assistant</h4>
+          <span class="status">Online</span>
+        </div>
+      </div>
+      <button class="clear-btn" (click)="clearChat()" title="Clear conversation">
+        🗑️
+      </button>
+    </div>
+
+    <!-- Messages -->
+    <div class="chat-messages" #messagesContainer>
+      <!-- Welcome message -->
+      <div class="message assistant" *ngIf="messages.length === 0">
+        <div class="message-content">
+          Hi! 👋 I'm your SuperDuper Mart assistant. How can I help you today?
+        </div>
+      </div>
+
+      <!-- Message history -->
+      <div 
+        *ngFor="let msg of messages" 
+        class="message" 
+        [class.user]="msg.role === 'user'"
+        [class.assistant]="msg.role === 'assistant'"
+      >
+        <div class="message-content">{{ msg.message }}</div>
+        <div class="message-time">{{ msg.timestamp | date:'shortTime' }}</div>
+      </div>
+
+      <!-- Loading indicator -->
+      <div class="message assistant" *ngIf="isLoading">
+        <div class="typing-indicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Input -->
+    <div class="chat-input">
+      <textarea
+        #messageInput
+        [(ngModel)]="newMessage"
+        (keypress)="onKeyPress($event)"
+        placeholder="Type your message..."
+        rows="1"
+        [disabled]="isLoading"
+      ></textarea>
+      <button 
+        class="send-btn" 
+        (click)="sendMessage()" 
+        [disabled]="!newMessage.trim() || isLoading"
+      >
+        ➤
+      </button>
+    </div>
+  </div>
+</ng-container>
