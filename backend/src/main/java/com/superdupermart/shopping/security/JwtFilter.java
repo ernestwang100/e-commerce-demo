@@ -13,6 +13,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
@@ -28,23 +29,17 @@ public class JwtFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         
-        String authHeader = request.getHeader("Authorization");
+        Optional<AuthUserDetail> authUserDetailOptional = jwtProvider.resolveToken(request);
 
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            String token = authHeader.substring(7);
-            if (jwtProvider.validateToken(token)) {
-                String username = jwtProvider.extractUsername(token);
-                boolean isAdmin = jwtProvider.extractClaim(token, claims -> claims.get("isAdmin", Boolean.class));
-                
-                List<SimpleGrantedAuthority> authorities = Collections.singletonList(
-                        new SimpleGrantedAuthority(isAdmin ? "ROLE_ADMIN" : "ROLE_USER")
-                );
+        if (authUserDetailOptional.isPresent()){
+            AuthUserDetail authUserDetail = authUserDetailOptional.get();
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+                    authUserDetail, 
+                    null,
+                    authUserDetail.getAuthorities()
+            );
 
-                UsernamePasswordAuthenticationToken authentication = 
-                        new UsernamePasswordAuthenticationToken(username, null, authorities);
-                
-                SecurityContextHolder.getContext().setAuthentication(authentication);
-            }
+            SecurityContextHolder.getContext().setAuthentication(authentication);
         }
 
         filterChain.doFilter(request, response);
