@@ -1,5 +1,8 @@
-<mat-toolbar color="primary">
-  <span>SuperDuper Mart</span>
+<mat-toolbar color="primary" class="main-header">
+  <div class="brand" routerLink="/">
+    <mat-icon class="logo-icon">shopping_bag</mat-icon>
+    <span class="brand-name">SuperDuper Mart</span>
+  </div>
   <span class="spacer"></span>
   <button mat-button routerLink="/user">Shop</button>
   <ng-container *ngIf="!(authService.user | async); else loggedIn">
@@ -7,12 +10,18 @@
     <button mat-button routerLink="/auth/register">Register</button>
   </ng-container>
   <ng-template #loggedIn>
-    <button mat-button routerLink="/user/cart">
+    <button mat-button routerLink="/user/cart" class="nav-btn">
       <mat-icon [matBadge]="cartCount" [matBadgeHidden]="cartCount === 0" matBadgeColor="accent">shopping_cart</mat-icon>
-      Cart
+      <span class="btn-text">Cart</span>
     </button>
-    <button mat-button routerLink="/user/orders">Orders</button>
-    <button mat-button routerLink="/user/watchlist">Watchlist</button>
+    <button mat-button routerLink="/user/orders" class="nav-btn">
+      <mat-icon>receipt_long</mat-icon>
+      <span class="btn-text">Orders</span>
+    </button>
+    <button mat-button routerLink="/user/watchlist" class="nav-btn">
+      <mat-icon>favorite</mat-icon>
+      <span class="btn-text">Watchlist</span>
+    </button>
     <button mat-button routerLink="/admin" *ngIf="isAdmin">
       <mat-icon>admin_panel_settings</mat-icon> Admin
     </button>

@@ -1,1 +1,63 @@
-/* You can add global styles to this file, and also import other style files */
+/* Global Styles & Color Palette */
+@import "@angular/material/prebuilt-themes/indigo-pink.css";
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+:root {
+    --main-color: #3F9AAE;
+    --second-color: #79C9C5;
+    --third-color: #FFE2AF;
+    --fourth-color: #F96E5B;
+    --white: #FFFFFF;
+    --bg-soft: #F0F4F7;
+    --text-dark: #1F2D3D;
+    --text-soft: #596780;
+
+    --main-gradient: linear-gradient(135deg, var(--main-color) 0%, var(--second-color) 100%);
+    --warm-gradient: linear-gradient(135deg, var(--fourth-color) 0%, var(--third-color) 100%);
+
+    --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 10px 15px -3px rgba(0, 0, 0, 0.08);
+    --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+}
+
+body {
+    margin: 0;
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--white);
+    color: var(--text-dark);
+    -webkit-font-smoothing: antialiased;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+    color: var(--main-color);
+    font-weight: 700;
+}
+
+/* Material theme overrides */
+.mat-toolbar.mat-primary {
+    background: var(--main-gradient) !important;
+    color: var(--white) !important;
+}
+
+.mat-flat-button.mat-primary,
+.mat-raised-button.mat-primary {
+    background: var(--main-gradient) !important;
+}
+
+.mat-flat-button.mat-accent,
+.mat-raised-button.mat-accent {
+    background: var(--fourth-color) !important;
+    color: white !important;
+}
+
+.mat-card {
+    border-radius: 24px !important;
+    border: 1px solid rgba(63, 154, 174, 0.1) !important;
+    box-shadow: var(--shadow-md) !important;
+}
