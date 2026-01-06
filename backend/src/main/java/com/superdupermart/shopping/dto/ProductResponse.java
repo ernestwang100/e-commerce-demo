@@ -21,4 +21,18 @@ public class ProductResponse {
     // Admin only fields
     private BigDecimal wholesalePrice;
     private Integer quantity;
+
+    public static ProductResponse fromEntity(com.superdupermart.shopping.entity.Product product, boolean isAdmin) {
+        ProductResponseBuilder builder = ProductResponse.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .retailPrice(product.getRetailPrice());
+        
+        if (isAdmin) {
+            builder.wholesalePrice(product.getWholesalePrice())
+                   .quantity(product.getQuantity());
+        }
+        return builder.build();
+    }
 }

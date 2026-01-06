@@ -13,23 +13,23 @@ export class ProductService {
   constructor(private http: HttpClient) { }
 
   getAllProducts(): Observable<Product[]> {
-    return this.http.get<Product[]>(`${environment.apiUrl}/user/products`);
+    return this.http.get<Product[]>(`${environment.apiUrl}/products/all`);
   }
 
   getProductById(id: number): Observable<Product> {
-    return this.http.get<Product>(`${environment.apiUrl}/user/products/${id}`);
+    return this.http.get<Product>(`${environment.apiUrl}/products/${id}`);
   }
 
   // Admin methods
   createProduct(product: ProductRequest): Observable<Product> {
-    return this.http.post<Product>(`${environment.apiUrl}/admin/products`, product);
+    return this.http.post<Product>(`${environment.apiUrl}/products`, product);
   }
 
   updateProduct(id: number, product: ProductRequest): Observable<Product> {
-    return this.http.put<Product>(`${environment.apiUrl}/admin/products/${id}`, product);
+    return this.http.patch<Product>(`${environment.apiUrl}/products/${id}`, product);
   }
 
   deleteProduct(id: number): Observable<void> {
-    return this.http.delete<void>(`${environment.apiUrl}/admin/products/${id}`);
+    return this.http.delete<void>(`${environment.apiUrl}/products/${id}`);
   }
 }
