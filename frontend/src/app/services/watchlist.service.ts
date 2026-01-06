@@ -13,14 +13,14 @@ export class WatchlistService {
     constructor(private http: HttpClient) { }
 
     getWatchlist(): Observable<WatchlistItem[]> {
-        return this.http.get<WatchlistItem[]>(`${this.apiUrl}/user/watchlist`);
+        return this.http.get<WatchlistItem[]>(`${this.apiUrl}/watchlist/products/all`);
     }
 
     addToWatchlist(productId: number): Observable<string> {
-        return this.http.post(`${this.apiUrl}/user/watchlist/${productId}`, {}, { responseType: 'text' });
+        return this.http.post(`${this.apiUrl}/watchlist/product/${productId}`, {}, { responseType: 'text' });
     }
 
     removeFromWatchlist(productId: number): Observable<string> {
-        return this.http.delete(`${this.apiUrl}/user/watchlist/${productId}`, { responseType: 'text' });
+        return this.http.delete(`${this.apiUrl}/watchlist/product/${productId}`, { responseType: 'text' });
     }
 }

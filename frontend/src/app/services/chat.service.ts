@@ -19,7 +19,7 @@ export interface ChatRequest {
     providedIn: 'root'
 })
 export class ChatService {
-    private apiUrl = `${environment.apiUrl}/user/chat`;
+    private apiUrl = `${environment.apiUrl}/chat`;
     private messagesSubject = new BehaviorSubject<ChatMessage[]>([]);
     private sessionId: string | null = null;
 
