@@ -20,8 +20,9 @@ public class StatsServiceImpl implements StatsService {
     @Override
     public UserStatsResponse getUserStats(Integer userId) {
         // Top 3 most recently purchased item names
+        // Using GROUP BY with MAX to avoid DISTINCT + ORDER BY incompatibility in MySQL
         List<String> mostRecent = entityManager.createQuery(
-                "SELECT DISTINCT i.product.name FROM OrderItem i WHERE i.order.user.id = :userId ORDER BY i.order.datePlaced DESC", String.class)
+                "SELECT i.product.name FROM OrderItem i WHERE i.order.user.id = :userId GROUP BY i.product.name ORDER BY MAX(i.order.datePlaced) DESC", String.class)
                 .setParameter("userId", userId)
                 .setMaxResults(3)
                 .getResultList();

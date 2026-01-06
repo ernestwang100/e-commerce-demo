@@ -10,6 +10,6 @@ export interface AdminStats {
 }
 
 export interface UserStats {
-    mostFrequentlyPurchased: ProductStat[];
-    mostRecentlyPurchased: ProductStat[];
+    mostFrequent: string[];
+    mostRecent: string[];
 }
