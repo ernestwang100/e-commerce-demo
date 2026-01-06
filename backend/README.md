@@ -31,17 +31,7 @@ This starts MySQL 8.0 on port 3307.
 
 **Important:** The application uses Jasypt for password encryption. You must provide the encryption password.
 
-### PowerShell
-```powershell
-$env:JASYPT_ENCRYPTOR_PASSWORD='commerce'; mvn spring-boot:run
-```
-
-### Bash / Linux / Mac
-```bash
-JASYPT_ENCRYPTOR_PASSWORD=commerce mvn spring-boot:run
-```
-
-### Alternative (JVM argument)
+### Start Command
 ```bash
 mvn spring-boot:run -Djasypt.encryptor.password=commerce
 ```

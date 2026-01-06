@@ -95,6 +95,7 @@
 							<artifactId>lombok</artifactId>
 						</exclude>
 					</excludes>
+                    <jvmArguments>-Djasypt.encryptor.password=${jasypt.encryptor.password}</jvmArguments>
 				</configuration>
 			</plugin>
 		</plugins>
