@@ -21,9 +21,9 @@ public class JwtProvider {
     @Value("${jwt.expiration}")
     private long expiration;
 
-    public String createToken(String username, boolean isAdmin) {
+    public String createToken(String username, String role) {
         Claims claims = Jwts.claims().setSubject(username);
-        claims.put("isAdmin", isAdmin);
+        claims.put("role", role);
 
         Date now = new Date();
         Date validity = new Date(now.getTime() + expiration);

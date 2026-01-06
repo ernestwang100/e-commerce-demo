@@ -24,6 +24,6 @@ public class User {
     @Column(nullable = false)
     private String password;
 
-    @Column(name = "is_admin", nullable = false)
-    private Boolean isAdmin;
+    @Column(name = "role", nullable = false)
+    private String role;
 }

@@ -14,6 +14,19 @@ docker-compose up -d
 ```
 This starts MySQL 8.0 on port 3307.
 
+### Connection Details
+- **Host:** `localhost`
+- **Port:** `3307`
+- **Database:** `shopping_app`
+- **Username:** `shopuser`
+- **Password:** `shoppass`
+- **Root Password:** `root`
+
+### Admin User
+- **Username:** `admin`
+- **Password:** `123`
+- **Role:** `ADMIN`
+
 ## Running the Application
 
 **Important:** The application uses Jasypt for password encryption. You must provide the encryption password.

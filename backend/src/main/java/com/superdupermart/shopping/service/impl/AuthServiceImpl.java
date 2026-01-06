@@ -41,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .isAdmin(false)
+                .role("USER")
                 .build();
 
         userDao.save(user);
@@ -56,12 +56,12 @@ public class AuthServiceImpl implements AuthService {
             throw new InvalidCredentialsException();
         }
 
-        String token = jwtProvider.createToken(user.getUsername(), user.getIsAdmin());
+        String token = jwtProvider.createToken(user.getUsername(), user.getRole());
 
         return AuthResponse.builder()
                 .token(token)
                 .username(user.getUsername())
-                .isAdmin(user.getIsAdmin())
+                .role(user.getRole())
                 .build();
     }
 }
