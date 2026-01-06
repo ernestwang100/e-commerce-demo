@@ -14,27 +14,27 @@ export class OrderService {
 
     // User endpoints
     placeOrder(request: OrderRequest): Observable<OrderResponse> {
-        return this.http.post<OrderResponse>(`${this.apiUrl}/user/orders`, request);
+        return this.http.post<OrderResponse>(`${this.apiUrl}/orders`, request);
     }
 
     getUserOrders(): Observable<OrderResponse[]> {
-        return this.http.get<OrderResponse[]>(`${this.apiUrl}/user/orders`);
+        return this.http.get<OrderResponse[]>(`${this.apiUrl}/orders/all`);
     }
 
     cancelOrder(orderId: number): Observable<string> {
-        return this.http.post(`${this.apiUrl}/user/orders/${orderId}/cancel`, {}, { responseType: 'text' });
+        return this.http.patch(`${this.apiUrl}/orders/${orderId}/cancel`, {}, { responseType: 'text' });
     }
 
     // Admin endpoints
     getAdminOrders(page: number = 1): Observable<OrderResponse[]> {
-        return this.http.get<OrderResponse[]>(`${this.apiUrl}/admin/orders?page=${page}`);
+        return this.http.get<OrderResponse[]>(`${this.apiUrl}/orders/all?page=${page}`);
     }
 
     completeOrder(orderId: number): Observable<string> {
-        return this.http.post(`${this.apiUrl}/admin/orders/${orderId}/complete`, {}, { responseType: 'text' });
+        return this.http.patch(`${this.apiUrl}/orders/${orderId}/complete`, {}, { responseType: 'text' });
     }
 
     cancelOrderAdmin(orderId: number): Observable<string> {
-        return this.http.post(`${this.apiUrl}/admin/orders/${orderId}/cancel`, {}, { responseType: 'text' });
+        return this.http.patch(`${this.apiUrl}/orders/${orderId}/cancel`, {}, { responseType: 'text' });
     }
 }

@@ -4,7 +4,7 @@ export interface OrderItemRequest {
 }
 
 export interface OrderRequest {
-    items: OrderItemRequest[];
+    order: OrderItemRequest[];
 }
 
 export interface OrderItemResponse {

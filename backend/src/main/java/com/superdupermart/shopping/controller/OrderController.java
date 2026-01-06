@@ -2,69 +2,61 @@ package com.superdupermart.shopping.controller;
 
 import com.superdupermart.shopping.dto.OrderRequest;
 import com.superdupermart.shopping.dto.OrderResponse;
-import com.superdupermart.shopping.entity.User;
-import com.superdupermart.shopping.dao.UserDao;
+import com.superdupermart.shopping.security.SecurityUtils;
 import com.superdupermart.shopping.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
+import java.util.Map;
+import java.util.Collections;
 
 @RestController
+@RequestMapping("/orders")
 public class OrderController {
 
     private final OrderService orderService;
-    private final UserDao userDao;
 
     @Autowired
-    public OrderController(OrderService orderService, UserDao userDao) {
+    public OrderController(OrderService orderService) {
         this.orderService = orderService;
-        this.userDao = userDao;
     }
 
-    // User Endpoints
-    @PostMapping("/user/orders")
-    public ResponseEntity<OrderResponse> placeOrder(Authentication auth, @RequestBody OrderRequest request) {
-        Integer userId = getUserId(auth);
+    @PostMapping
+    public ResponseEntity<OrderResponse> placeOrder(@RequestBody OrderRequest request) {
+        Integer userId = SecurityUtils.getCurrentUserId();
+        if (userId == null) {
+            throw new RuntimeException("Unable to retrieve user ID from authentication context");
+        }
         return ResponseEntity.ok(orderService.placeOrder(userId, request));
     }
 
-    @GetMapping("/user/orders")
-    public ResponseEntity<List<OrderResponse>> getUserOrders(Authentication auth) {
-        Integer userId = getUserId(auth);
-        return ResponseEntity.ok(orderService.getOrdersByUser(userId));
+    @GetMapping("/all")
+    public ResponseEntity<Object> getAllOrders(@RequestParam(defaultValue = "1") int page,
+                                               @RequestParam(defaultValue = "5") int size) {
+        if (SecurityUtils.isAdmin()) {
+             return ResponseEntity.ok(orderService.getPaginatedOrders(page)); 
+        } else {
+             Integer userId = SecurityUtils.getCurrentUserId();
+             // Current Service implementation doesn't have pagination for user orders specifically, 
+             // but we can filter or just return all for now if small. 
+             // Aligning with standard paginated response if possible.
+             return ResponseEntity.ok(orderService.getOrdersByUser(userId));
+        }
     }
 
-    @PostMapping("/user/orders/{id}/cancel")
-    public ResponseEntity<String> cancelUserOrder(Authentication auth, @PathVariable Integer id) {
-        Integer userId = getUserId(auth);
-        orderService.cancelOrder(id, userId, false);
-        return ResponseEntity.ok("Order canceled successfully");
+    @PatchMapping("/{id}/cancel")
+    public ResponseEntity<Map<String, String>> cancelOrder(@PathVariable Integer id) {
+        boolean isAdmin = SecurityUtils.isAdmin();
+        Integer userId = SecurityUtils.getCurrentUserId();
+        // If admin, userId doesn't matter for ownership check in service usually, or we pass null/admin flag
+        orderService.cancelOrder(id, userId, isAdmin);
+        return ResponseEntity.ok(Collections.singletonMap("message", "Order canceled successfully"));
     }
 
-    // Admin Endpoints
-    @GetMapping("/admin/orders")
-    public ResponseEntity<List<OrderResponse>> getPaginatedOrders(@RequestParam(defaultValue = "1") int page) {
-        return ResponseEntity.ok(orderService.getPaginatedOrders(page));
-    }
-
-    @PostMapping("/admin/orders/{id}/complete")
-    public ResponseEntity<String> completeOrder(@PathVariable Integer id) {
+    @PatchMapping("/{id}/complete")
+    public ResponseEntity<Map<String, String>> completeOrder(@PathVariable Integer id) {
         orderService.completeOrder(id);
-        return ResponseEntity.ok("Order completed successfully");
-    }
-
-    @PostMapping("/admin/orders/{id}/cancel")
-    public ResponseEntity<String> cancelAdminOrder(@PathVariable Integer id) {
-        orderService.cancelOrder(id, null, true);
-        return ResponseEntity.ok("Order canceled by admin successfully");
-    }
-
-    private Integer getUserId(Authentication auth) {
-        String username = auth.getName();
-        return userDao.findByUsername(username)
-                .map(User::getId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        return ResponseEntity.ok(Collections.singletonMap("message", "Order completed successfully"));
     }
 }
