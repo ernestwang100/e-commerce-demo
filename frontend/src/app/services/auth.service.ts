@@ -21,12 +21,13 @@ export class AuthService {
   }
 
   login(request: LoginRequest): Observable<User> {
-    return this.http.post<AuthResponse>(`${environment.apiUrl}/auth/login`, request)
+    return this.http.post<AuthResponse>(`${environment.apiUrl}/login`, request)
       .pipe(map(response => {
         const user: User = {
           username: response.username,
           token: response.token,
-          isAdmin: response.isAdmin
+          role: response.role,
+          isAdmin: response.role === 'ROLE_ADMIN'
         };
         localStorage.setItem('user', JSON.stringify(user));
         this.userSubject.next(user);
@@ -35,7 +36,7 @@ export class AuthService {
   }
 
   register(request: RegisterRequest): Observable<any> {
-    return this.http.post(`${environment.apiUrl}/auth/register`, request);
+    return this.http.post(`${environment.apiUrl}/signup`, request);
   }
 
   logout() {

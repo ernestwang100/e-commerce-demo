@@ -1,6 +1,7 @@
 export interface User {
     username: string;
     token: string;
+    role: string;
     isAdmin: boolean;
 }
 
@@ -18,5 +19,5 @@ export interface RegisterRequest {
 export interface AuthResponse {
     token: string;
     username: string;
-    isAdmin: boolean;
+    role: string;
 }

@@ -56,12 +56,14 @@ public class AuthServiceImpl implements AuthService {
             throw new InvalidCredentialsException();
         }
 
-        String token = jwtProvider.createToken(user.getUsername(), user.getRole());
+        String role = user.getRole().startsWith("ROLE_") ? user.getRole() : "ROLE_" + user.getRole();
+        String token = jwtProvider.createToken(user.getUsername(), role, user.getId());
 
         return AuthResponse.builder()
                 .token(token)
                 .username(user.getUsername())
                 .role(user.getRole())
+                .id(user.getId())
                 .build();
     }
 }
