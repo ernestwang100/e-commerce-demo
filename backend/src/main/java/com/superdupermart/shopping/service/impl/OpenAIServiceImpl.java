@@ -15,7 +15,8 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 
-@Service
+// Disabled: Using GeminiServiceImpl instead
+// @Service
 public class OpenAIServiceImpl implements AIService {
 
     @Value("${openai.api.key:}")
