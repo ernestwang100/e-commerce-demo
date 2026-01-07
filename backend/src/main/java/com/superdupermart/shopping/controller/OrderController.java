@@ -6,6 +6,7 @@ import com.superdupermart.shopping.security.SecurityUtils;
 import com.superdupermart.shopping.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Map;
@@ -55,6 +56,7 @@ public class OrderController {
     }
 
     @PatchMapping("/{id}/complete")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<Map<String, String>> completeOrder(@PathVariable Integer id) {
         orderService.completeOrder(id);
         return ResponseEntity.ok(Collections.singletonMap("message", "Order completed successfully"));

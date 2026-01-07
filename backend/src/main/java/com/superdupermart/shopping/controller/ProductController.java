@@ -6,6 +6,7 @@ import com.superdupermart.shopping.service.ProductService;
 import com.superdupermart.shopping.service.StatsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import com.superdupermart.shopping.security.SecurityUtils;
 import java.util.List;
@@ -37,12 +38,14 @@ public class ProductController {
     }
 
     @PostMapping
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> addProduct(@RequestBody ProductRequest request) {
         productService.addProduct(request);
         return ResponseEntity.ok("Product added successfully");
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> updateProduct(@PathVariable Integer id, @RequestBody ProductRequest request) {
         productService.updateProduct(id, request);
         return ResponseEntity.ok("Product updated successfully");
@@ -61,11 +64,13 @@ public class ProductController {
     }
 
     @GetMapping("/profit/{limit}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<?>> getMostProfitable(@PathVariable Integer limit) {
         return ResponseEntity.ok(statsService.getAdminStats().getMostProfitable());
     }
 
     @GetMapping("/popular/{limit}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<List<?>> getMostPopular(@PathVariable Integer limit) {
         return ResponseEntity.ok(statsService.getAdminStats().getMostPopular());
     }
