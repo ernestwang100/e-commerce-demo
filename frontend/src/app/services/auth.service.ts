@@ -27,7 +27,7 @@ export class AuthService {
           username: response.username,
           token: response.token,
           role: response.role,
-          isAdmin: response.role === 'ROLE_ADMIN'
+          isAdmin: response.role === 'ADMIN' || response.role === 'ROLE_ADMIN'
         };
         localStorage.setItem('user', JSON.stringify(user));
         this.userSubject.next(user);
