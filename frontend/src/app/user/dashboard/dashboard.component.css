@@ -158,6 +158,15 @@
     height: 52px;
     background: var(--main-gradient) !important;
     color: white !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+}
+
+.buy-btn .mat-icon,
+.details-btn .mat-icon {
+    margin-right: 0 !important;
 }
 
 .details-btn {
@@ -165,4 +174,7 @@
     color: var(--text-soft) !important;
     height: 52px;
     border: 2px solid var(--bg-soft) !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
 }

@@ -58,6 +58,9 @@
     padding: 0 20px !important;
     color: var(--white) !important;
     transition: all 0.3s !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
 }
 
 .nav-btn:hover {
@@ -66,7 +69,7 @@
 }
 
 .nav-btn .mat-icon {
-    margin-right: 8px;
+    margin-right: 0 !important;
 }
 
 .btn-text {

@@ -73,7 +73,7 @@ export class CartComponent implements OnInit, OnDestroy {
 
     this.processing = true;
     const orderRequest: OrderRequest = {
-      items: this.cartItems.map(item => ({
+      order: this.cartItems.map(item => ({
         productId: item.product.id,
         quantity: item.quantity
       }))
