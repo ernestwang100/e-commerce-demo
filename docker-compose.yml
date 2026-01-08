@@ -1,0 +1,54 @@
+version: '3.8'
+
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: mysql-db
+    environment:
+      MYSQL_DATABASE: shopping_app
+      MYSQL_USER: shopuser
+      MYSQL_PASSWORD: shoppass
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3307:3306"
+    networks:
+      - shopping-network
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: shopping-backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/shopping_app?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
+      - JASYPT_ENCRYPTOR_PASSWORD=commerce
+      - GEMINI_API_KEY=${GEMINI_API_KEY}
+    ports:
+      - "7070:7070"
+    networks:
+      - shopping-network
+
+  frontend:
+    build: ./frontend
+    container_name: shopping-frontend
+    ports:
+      - "4200:80"
+    depends_on:
+      - backend
+    networks:
+      - shopping-network
+
+networks:
+  shopping-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
