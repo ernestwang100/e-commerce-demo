@@ -29,6 +29,7 @@ public class GeminiServiceImpl implements AIService {
     private final ObjectMapper objectMapper;
     private final ProductService productService;
     private final RestTemplate restTemplate;
+    private final com.superdupermart.shopping.service.RagService ragService;
     
     @org.springframework.beans.factory.annotation.Autowired(required = false)
     public void setApiKey(@Value("${google.gemini.api.key:}") String apiKey) {
@@ -53,10 +54,11 @@ public class GeminiServiceImpl implements AIService {
         """;
 
     @Autowired
-    public GeminiServiceImpl(ProductService productService, ObjectMapper objectMapper) {
+    public GeminiServiceImpl(ProductService productService, ObjectMapper objectMapper, com.superdupermart.shopping.service.RagService ragService) {
         this.productService = productService;
         this.objectMapper = objectMapper;
         this.restTemplate = new RestTemplate();
+        this.ragService = ragService;
     }
 
     @Override
@@ -71,6 +73,10 @@ public class GeminiServiceImpl implements AIService {
 
         while (retryCount <= maxRetries) {
             try {
+                // Retrieve relevant documents via RAG
+                List<org.springframework.ai.document.Document> retrievedDocs = ragService.retrieveDocuments(userMessage);
+                String ragContext = formatRagContext(retrievedDocs);
+
                 // Build Gemini API URL
                 String url = apiBaseUrl + "/" + model + ":generateContent?key=" + apiKey;
 
@@ -82,7 +88,13 @@ public class GeminiServiceImpl implements AIService {
                 systemContext.put("role", "user");
                 ArrayNode systemParts = objectMapper.createArrayNode();
                 ObjectNode systemPart = objectMapper.createObjectNode();
-                systemPart.put("text", "System context: " + SYSTEM_PROMPT + buildContextInfo() + "\n\nNow respond to user messages as this assistant.");
+                
+                String fullSystemPrompt = "System context: " + SYSTEM_PROMPT + 
+                                          buildContextInfo() + 
+                                          "\n\nRelevant Product Information:\n" + ragContext +
+                                          "\n\nNow respond to user messages as this assistant.";
+                                          
+                systemPart.put("text", fullSystemPrompt);
                 systemParts.add(systemPart);
                 systemContext.set("parts", systemParts);
                 contents.add(systemContext);
@@ -92,7 +104,7 @@ public class GeminiServiceImpl implements AIService {
                 modelAck.put("role", "model");
                 ArrayNode modelParts = objectMapper.createArrayNode();
                 ObjectNode modelPart = objectMapper.createObjectNode();
-                modelPart.put("text", "Understood. I am the SuperDuper Mart assistant. How can I help you today?");
+                modelPart.put("text", "Understood. I have access to the store's product information. How can I help you today?");
                 modelParts.add(modelPart);
                 modelAck.set("parts", modelParts);
                 contents.add(modelAck);
@@ -194,5 +206,15 @@ public class GeminiServiceImpl implements AIService {
         }
         
         return context.toString();
+    }
+    
+    private String formatRagContext(List<org.springframework.ai.document.Document> docs) {
+        if (docs == null || docs.isEmpty()) {
+            return "No specific product information found.";
+        }
+        return docs.stream()
+            .map(org.springframework.ai.document.Document::getContent)
+            .reduce((a, b) -> a + "\n---\n" + b)
+            .orElse("");
     }
 }
