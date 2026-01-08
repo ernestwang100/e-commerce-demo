@@ -31,9 +31,28 @@ This starts MySQL 8.0 on port 3307.
 
 **Important:** The application uses Jasypt for password encryption. You must provide the encryption password.
 
-### Start Command
+### Environment Variables
+Create a `.env` file (already exists) with your Gemini API key:
+```
+GEMINI_API_KEY=your_api_key_here
+```
+
+### Start Command (PowerShell)
+```powershell
+# Load .env and run
+Get-Content .env | ForEach-Object { if ($_ -match "^([^=]+)=(.*)$") { [Environment]::SetEnvironmentVariable($matches[1], $matches[2]) } }
+mvn spring-boot:run "-Djasypt.encryptor.password=commerce"
+```
+
+### Start Command (Bash/Linux/Mac)
 ```bash
+export $(cat .env | xargs)
 mvn spring-boot:run -Djasypt.encryptor.password=commerce
+```
+
+### Quick Start (with inline env var)
+```powershell
+$env:GEMINI_API_KEY="YOUR_API_KEY"; mvn spring-boot:run "-Djasypt.encryptor.password=commerce"
 ```
 
 The application runs on **http://localhost:7070**
