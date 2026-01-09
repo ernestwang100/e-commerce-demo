@@ -11,6 +11,9 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+
 @Service
 public class ProductServiceImpl implements ProductService {
 
@@ -22,6 +25,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "products", key = "#isAdmin")
     public List<ProductResponse> getAllProducts(boolean isAdmin) {
         List<Product> products = isAdmin ? productDao.getAllProducts() : productDao.getInStockProducts();
         return products.stream()
@@ -43,6 +47,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public void addProduct(ProductRequest request) {
         Product product = Product.builder()
                 .name(request.getName())
@@ -56,6 +61,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = "products", allEntries = true)
     public void updateProduct(Integer id, ProductRequest request) {
         Product product = productDao.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
