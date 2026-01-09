@@ -21,12 +21,22 @@ services:
       timeout: 20s
       retries: 10
 
+  redis:
+    image: redis:alpine
+    container_name: shopping-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - shopping-network
+
   backend:
     build: ./backend
     container_name: shopping-backend
     depends_on:
       mysql:
         condition: service_healthy
+      redis:
+        condition: service_started
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/shopping_app?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       - JASYPT_ENCRYPTOR_PASSWORD=commerce
