@@ -21,18 +21,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.springframework.kafka.core.KafkaTemplate;
+
 @Service
 public class OrderServiceImpl implements OrderService {
 
     private final OrderDao orderDao;
     private final ProductDao productDao;
     private final UserDao userDao;
+    private final KafkaTemplate<String, String> kafkaTemplate;
 
     @Autowired
-    public OrderServiceImpl(OrderDao orderDao, ProductDao productDao, UserDao userDao) {
+    public OrderServiceImpl(OrderDao orderDao, ProductDao productDao, UserDao userDao, KafkaTemplate<String, String> kafkaTemplate) {
         this.orderDao = orderDao;
         this.productDao = productDao;
         this.userDao = userDao;
+        this.kafkaTemplate = kafkaTemplate;
     }
 
     @Override
@@ -60,16 +64,21 @@ public class OrderServiceImpl implements OrderService {
             productDao.update(product);
 
             OrderItem orderItem = OrderItem.builder()
-                    .order(order)
-                    .product(product)
-                    .quantity(itemRequest.getQuantity())
-                    .purchasedPrice(product.getRetailPrice())
-                    .build();
+                .order(order)
+                .product(product)
+                .quantity(itemRequest.getQuantity())
+                .purchasedPrice(product.getRetailPrice())
+                .build();
             
             order.getItems().add(orderItem);
         }
 
         orderDao.save(order);
+        
+        // Publish event to Kafka
+        String message = "Order placed successfully. Order ID: " + order.getId() + ", User: " + user.getUsername();
+        kafkaTemplate.send("orders", message);
+        
         return mapToResponse(order);
     }
 
