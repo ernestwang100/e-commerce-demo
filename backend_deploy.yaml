@@ -1,0 +1,48 @@
+location: eastus
+name: shopping-backend
+resourceGroup: shopping-rg
+type: Microsoft.App/containerApps
+properties:
+  configuration:
+    activeRevisionsMode: Single
+    ingress:
+      external: true
+      targetPort: 7070
+      transport: Auto
+      allowInsecure: false
+    registries:
+      - server: shoppingregistry9946.azurecr.io
+        username: shoppingregistry9946
+        passwordSecretRef: registry-password
+    secrets:
+      - name: registry-password
+        value: "PLACEHOLDER_REGISTRY_PASSWORD"
+      - name: db-password
+        value: "PLACEHOLDER_DB_PASSWORD"
+      - name: redis-password
+        value: "PLACEHOLDER_REDIS_PASSWORD"
+  template:
+    containers:
+      - image: shoppingregistry9946.azurecr.io/backend:latest
+        name: shopping-backend
+        env:
+          - name: SPRING_DATASOURCE_URL
+            value: "jdbc:mysql://shopping-mysql:3306/shopping_app?useSSL=false&allowPublicKeyRetrieval=true"
+          - name: SPRING_DATASOURCE_USERNAME
+            value: "PLACEHOLDER_DB_USER"
+          - name: SPRING_DATASOURCE_PASSWORD
+            value: "PLACEHOLDER_DB_PASSWORD"
+          - name: SPRING_DATA_REDIS_HOST
+            value: "shopping-redis"
+          - name: SPRING_DATA_REDIS_PORT
+            value: "6379"
+          - name: JASYPT_ENCRYPTOR_PASSWORD
+            value: "PLACEHOLDER_JASYPT_PASSWORD"
+          - name: ALLOWED_ORIGINS
+            value: "*"
+        resources:
+          cpu: 1.0
+          memory: 2.0Gi
+    scale:
+      minReplicas: 1
+      maxReplicas: 1

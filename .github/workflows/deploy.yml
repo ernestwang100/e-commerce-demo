@@ -1,0 +1,74 @@
+name: Build and Deploy to Azure
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+
+env:
+  RESOURCE_GROUP: shopping-rg
+  ACR_NAME: shoppingregistry9946 # Replace with your actual ACR name
+  BACKEND_APP: shopping-backend
+  FRONTEND_APP: shopping-frontend
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Login to ACR
+        run: az acr login --name ${{ env.ACR_NAME }}
+
+      - name: Get ACR Login Server
+        id: acr
+        run: |
+          LOGIN_SERVER=$(az acr show --name ${{ env.ACR_NAME }} --query loginServer --output tsv)
+          echo "login_server=$LOGIN_SERVER" >> $GITHUB_OUTPUT
+
+      # Build and Push Backend
+      - name: Build and Push Backend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./backend
+          push: true
+          tags: ${{ steps.acr.outputs.login_server }}/backend:${{ github.sha }},${{ steps.acr.outputs.login_server }}/backend:latest
+
+      # Build and Push Frontend
+      - name: Build and Push Frontend
+        uses: docker/build-push-action@v5
+        with:
+          context: ./frontend
+          push: true
+          tags: ${{ steps.acr.outputs.login_server }}/frontend:${{ github.sha }},${{ steps.acr.outputs.login_server }}/frontend:latest
+
+      # Deploy to Azure Container Apps
+      - name: Deploy Backend
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          imageToDeploy: ${{ steps.acr.outputs.login_server }}/backend:${{ github.sha }}
+          targetPort: 7070
+          appSourcePath: ./backend
+          acrName: ${{ env.ACR_NAME }}
+          containerAppName: ${{ env.BACKEND_APP }}
+          resourceGroup: ${{ env.RESOURCE_GROUP }}
+
+      - name: Deploy Frontend
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          imageToDeploy: ${{ steps.acr.outputs.login_server }}/frontend:${{ github.sha }}
+          targetPort: 80
+          appSourcePath: ./frontend
+          acrName: ${{ env.ACR_NAME }}
+          containerAppName: ${{ env.FRONTEND_APP }}
+          resourceGroup: ${{ env.RESOURCE_GROUP }}

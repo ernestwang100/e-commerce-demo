@@ -108,10 +108,43 @@ jobs:
           imageToDeploy: shoppingregistry.azurecr.io/backend:${{ github.sha }}
 ```
 
-### Steps to activate:
-1.  **Azure Service Principal**: Create one via `az ad sp create-for-rbac` to get the `AZURE_CREDENTIALS`.
-2.  **GitHub Secrets**: Add `AZURE_CREDENTIALS` to your GitHub repository secrets.
-3.  **Commit the file**: Add the YAML file to `.github/workflows/` and push!
+### Steps to Setup CI/CD:
+
+1.  **Create Azure Service Principal**:
+    Run this command in your terminal to generate credentials for GitHub Actions:
+    ```bash
+    az ad sp create-for-rbac --name "shopping-cicd-sp" --role contributor --scopes /subscriptions/<SUBSCRIPTION_ID>/resourceGroups/<RESOURCE_GROUP> --sdk-auth
+    ```
+    *Replace `<SUBSCRIPTION_ID>` with your subscription ID `e4ea9fb0-d0b9-459b-8fe5-384d2054ae97` and `<RESOURCE_GROUP>` with `shopping-rg`.*
+
+    **Output (Copy this JSON):**
+    ```json
+    {
+      "clientId": "...",
+      "clientSecret": "...",
+      "subscriptionId": "...",
+      "tenantId": "...",
+       ...
+    }
+    ```
+
+2.  **Add Secrets to GitHub**:
+    Go to your GitHub Repository -> **Settings** -> **Secrets and variables** -> **Actions** -> **New repository secret**.
+
+    Add the following secrets:
+    - `AZURE_CREDENTIALS`: Paste the entire JSON output from step 1.
+    - `ACR_NAME`: Your registry name (e.g., `shoppingregistry9946`).
+    - `RESOURCE_GROUP`: `shopping-rg` (or your chosen group name).
+
+3.  **Push Application**:
+    Commit the `.github/workflows/deploy.yml` file and push to the `main` branch.
+    ```bash
+    git add .
+    git commit -m "Add CI/CD workflow"
+    git push origin main
+    ```
+
+    The workflow will automatically trigger, build your Docker images, push them to ACR, and deploy the new versions to Azure Container Apps.
 
 ---
 
