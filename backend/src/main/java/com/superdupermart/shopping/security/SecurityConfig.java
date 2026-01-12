@@ -28,8 +28,8 @@ public class SecurityConfig {
         this.jwtFilter = jwtFilter;
     }
 
-    @Value("${ALLOWED_ORIGINS:http://localhost:4200}")
-    private String allowedOrigins;
+    // Hardcoded for debugging to ensure no env var parsing issues
+    private String allowedOrigins = "https://shopping-frontend.greengrass-56c2de65.eastus.azurecontainerapps.io";
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -38,14 +38,14 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/signup").permitAll()
+                .requestMatchers("/login", "/signup", "/version").permitAll()
                 .requestMatchers("/products/**").permitAll()
                 .requestMatchers("/orders/**").authenticated()
                 .requestMatchers("/watchlist/**").authenticated()
                 .requestMatchers("/chat/**").authenticated()
                 .requestMatchers("/stats/**").authenticated()
-                .requestMatchers("/admin/**").hasRole("ADMIN")
-                .requestMatchers("/user/**").hasRole("USER")
+                .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                .requestMatchers("/user/**").hasAuthority("ROLE_USER")
                 .anyRequest().authenticated()
             )
             .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);

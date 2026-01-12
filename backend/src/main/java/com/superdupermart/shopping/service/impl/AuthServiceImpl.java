@@ -13,8 +13,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class AuthServiceImpl implements AuthService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthServiceImpl.class);
 
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
@@ -37,11 +42,14 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("Email already exists");
         }
 
+        logger.info("DEBUG: Registering user: " + request.getUsername() + ", Role requested: " + request.getRole());
+
         User user = User.builder()
                 .username(request.getUsername())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
-                .role("USER")
+                .role(request.getRole() != null ? request.getRole() : "USER")
+                .isAdmin("ADMIN".equals(request.getRole()))
                 .build();
 
         userDao.save(user);
