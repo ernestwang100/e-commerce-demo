@@ -30,4 +30,11 @@ public class User {
     @Column(name = "is_admin", nullable = false)
     @Builder.Default
     private Boolean isAdmin = false;
+
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] profilePicture;
+
+    @Column(name = "profile_picture_content_type")
+    private String profilePictureContentType;
 }
