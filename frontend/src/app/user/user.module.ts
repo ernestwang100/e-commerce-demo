@@ -19,6 +19,7 @@ import { ProductDetailComponent } from './product-detail/product-detail.componen
 import { CartComponent } from './cart/cart.component';
 import { OrderHistoryComponent } from './order-history/order-history.component';
 import { WatchlistComponent } from './watchlist/watchlist.component';
+import { ProfileComponent } from './profile/profile.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { WatchlistComponent } from './watchlist/watchlist.component';
     ProductDetailComponent,
     CartComponent,
     OrderHistoryComponent,
-    WatchlistComponent
+    WatchlistComponent,
+    ProfileComponent
   ],
   imports: [
     CommonModule,

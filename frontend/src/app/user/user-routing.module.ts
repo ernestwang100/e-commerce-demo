@@ -5,10 +5,12 @@ import { ProductDetailComponent } from './product-detail/product-detail.componen
 import { CartComponent } from './cart/cart.component';
 import { OrderHistoryComponent } from './order-history/order-history.component';
 import { WatchlistComponent } from './watchlist/watchlist.component';
+import { ProfileComponent } from './profile/profile.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
-  { path: 'product/:id', component: ProductDetailComponent },
+  { path: 'profile', component: ProfileComponent },
+  { path: 'products/:id', component: ProductDetailComponent },
   { path: 'cart', component: CartComponent },
   { path: 'orders', component: OrderHistoryComponent },
   { path: 'watchlist', component: WatchlistComponent }
