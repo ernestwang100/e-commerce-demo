@@ -31,6 +31,13 @@ jobs:
           username: ${{ secrets.REGISTRY_USERNAME }}
           password: ${{ secrets.REGISTRY_PASSWORD }}
 
+      - name: Inject Backend URL into Frontend
+        run: |
+          # Use BACKEND_URL secret if available, otherwise fallback to existing one
+          # Using sed to replace the placeholder or the hardcoded URL
+          URL="${{ secrets.BACKEND_URL || 'https://shopping-backend.greengrass-56c2de65.eastus.azurecontainerapps.io' }}"
+          sed -i "s|apiUrl:.*|apiUrl: '$URL'|g" frontend/src/environments/environment.prod.ts
+
       - name: Build and Push Backend Image
         run: |
           docker build -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/backend:${{ github.sha }} ./backend
@@ -43,8 +50,8 @@ jobs:
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build-push
-    if: false # Set to true once Azure Container Apps are provisioned
+    needs: build-and-push
+    if: true # Enabled for automatic deployment
     steps:
       - name: Azure Login
         uses: azure/login@v1
@@ -55,5 +62,12 @@ jobs:
         uses: azure/container-apps-deploy-action@v1
         with:
           containerAppName: shopping-backend
+          resourceGroup: shopping-rg
           imageToDeploy: ${{ secrets.REGISTRY_LOGIN_SERVER }}/backend:${{ github.sha }}
-          # ... other config
+
+      - name: Deploy Frontend to Container App
+        uses: azure/container-apps-deploy-action@v1
+        with:
+          containerAppName: shopping-frontend
+          resourceGroup: shopping-rg
+          imageToDeploy: ${{ secrets.REGISTRY_LOGIN_SERVER }}/frontend:${{ github.sha }}
