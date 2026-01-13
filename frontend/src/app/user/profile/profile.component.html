@@ -1,0 +1,54 @@
+<div class="profile-container">
+  <mat-card class="profile-card">
+    <mat-card-header>
+      <mat-card-title>Edit Profile</mat-card-title>
+    </mat-card-header>
+    
+    <mat-card-content>
+      <div class="picture-section">
+        <div class="image-preview" *ngIf="profilePictureUrl; else noPicture">
+          <img [src]="profilePictureUrl" alt="Profile Picture">
+        </div>
+        <ng-template #noPicture>
+            <div class="no-picture">
+                <mat-icon>account_circle</mat-icon>
+            </div>
+        </ng-template>
+
+        <div class="file-upload">
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" style="display: none" #fileInput>
+            <button mat-stroked-button (click)="fileInput.click()">Choose Picture</button>
+            <span *ngIf="selectedFile">{{ selectedFile.name }}</span>
+            <button mat-raised-button color="primary" *ngIf="selectedFile" (click)="uploadPicture()">Upload</button>
+        </div>
+      </div>
+
+      <div class="form-section" *ngIf="profile">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Username</mat-label>
+          <input matInput [value]="profile.username" disabled>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Role</mat-label>
+          <input matInput [value]="profile.role" disabled>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Email</mat-label>
+          <input matInput [(ngModel)]="email" placeholder="Enter new email">
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>New Password</mat-label>
+          <input matInput [(ngModel)]="password" type="password" placeholder="Enter new password (optional)">
+        </mat-form-field>
+
+      </div>
+    </mat-card-content>
+
+    <mat-card-actions align="end">
+      <button mat-raised-button color="primary" (click)="updateProfile()">Save Changes</button>
+    </mat-card-actions>
+  </mat-card>
+</div>
