@@ -17,12 +17,12 @@ services:
       - mysql-data:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
     healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
       timeout: 20s
       retries: 10
 
   redis:
-    image: redis:alpine
+    image: redis/redis-stack:latest
     container_name: shopping-redis
     ports:
       - "6379:6379"
@@ -71,6 +71,9 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/shopping_app?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true
       - JASYPT_ENCRYPTOR_PASSWORD=commerce
       - GEMINI_API_KEY=${GEMINI_API_KEY}
+      - REDIS_URL=redis://shopping-redis:6379
+      - REDIS_HOST=shopping-redis
+      - REDIS_PORT=6379
     ports:
       - "7070:7070"
     networks:
