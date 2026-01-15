@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
 
 env:
-  ACR_NAME: ernestwang100
+  ACR_NAME: shoppingregistry9946
   RESOURCE_GROUP: rg-ecommerce-aks
   CLUSTER_NAME: aks-ecommerce
   IMAGE_NAME_BACKEND: backend

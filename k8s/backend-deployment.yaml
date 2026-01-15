@@ -13,7 +13,7 @@ spec:
         app: backend
     spec:
       containers:
-      - image: ernestwang100.azurecr.io/backend:latest # Placeholder, updated by CI/CD
+      - image: shoppingregistry9946.azurecr.io/backend:latest # Placeholder, updated by CI/CD
         name: backend
         env:
         - name: SPRING_DATASOURCE_URL

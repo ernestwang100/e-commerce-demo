@@ -13,7 +13,7 @@ spec:
         app: frontend
     spec:
       containers:
-      - image: ernestwang100.azurecr.io/frontend:latest # Placeholder
+      - image: shoppingregistry9946.azurecr.io/frontend:latest # Placeholder
         name: frontend
         ports:
         - containerPort: 80
