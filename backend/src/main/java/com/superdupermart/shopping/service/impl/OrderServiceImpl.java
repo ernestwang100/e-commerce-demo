@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.kafka.core.KafkaTemplate;
 import com.superdupermart.shopping.service.EmailService;
+import com.superdupermart.shopping.service.PaymentService;
 
 @Service
 public class OrderServiceImpl implements OrderService {
@@ -32,15 +33,17 @@ public class OrderServiceImpl implements OrderService {
     private final UserDao userDao;
     private final KafkaTemplate<String, String> kafkaTemplate;
     private final EmailService emailService;
+    private final PaymentService paymentService;
 
     @Autowired
     public OrderServiceImpl(OrderDao orderDao, ProductDao productDao, UserDao userDao,
-            KafkaTemplate<String, String> kafkaTemplate, EmailService emailService) {
+            KafkaTemplate<String, String> kafkaTemplate, EmailService emailService, PaymentService paymentService) {
         this.orderDao = orderDao;
         this.productDao = productDao;
         this.userDao = userDao;
         this.kafkaTemplate = kafkaTemplate;
         this.emailService = emailService;
+        this.paymentService = paymentService;
     }
 
     @Override
@@ -55,6 +58,8 @@ public class OrderServiceImpl implements OrderService {
                 .orderStatus("Processing")
                 .items(new ArrayList<>())
                 .build();
+
+        double totalAmount = 0.0;
 
         for (OrderItemRequest itemRequest : request.getOrder()) {
             Product product = productDao.findById(itemRequest.getProductId())
@@ -75,7 +80,12 @@ public class OrderServiceImpl implements OrderService {
                     .build();
 
             order.getItems().add(orderItem);
+            totalAmount += product.getRetailPrice().multiply(java.math.BigDecimal.valueOf(itemRequest.getQuantity()))
+                    .doubleValue();
         }
+
+        // Simulate payment authorization
+        paymentService.authorizeTransaction(totalAmount);
 
         orderDao.save(order);
 
