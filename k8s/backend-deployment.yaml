@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+      - image: ernestwang100.azurecr.io/backend:latest # Placeholder, updated by CI/CD
+        name: backend
+        env:
+        - name: SPRING_DATASOURCE_URL
+          value: "jdbc:mysql://shopping-mysql:3306/shopping_app?useSSL=false&serverTimezone=UTC&allowPublicKeyRetrieval=true"
+        - name: SPRING_DATASOURCE_USERNAME
+          value: "shopuser"
+        - name: SPRING_DATASOURCE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: mysql-password
+        - name: SPRING_DATA_REDIS_HOST
+          value: "shopping-redis"
+        - name: SPRING_DATA_REDIS_PORT
+          value: "6379"
+        - name: REDIS_URL
+          value: "redis://shopping-redis:6379"
+        - name: REDIS_HOST
+          value: "shopping-redis"
+        - name: REDIS_PORT
+          value: "6379"
+        - name: SPRING_KAFKA_BOOTSTRAP_SERVERS
+          value: "shopping-kafka:9092"
+        - name: GEMINI_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: gemini-api-key
+        ports:
+        - containerPort: 7070
+          name: http
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: shopping-backend
+spec:
+  ports:
+  - port: 7070
+    targetPort: 7070
+  selector:
+    app: backend
+  type: ClusterIP
