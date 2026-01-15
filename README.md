@@ -22,6 +22,7 @@ A full-stack e-commerce application featuring a Spring Boot backend, Angular fro
 - **Order Management**: Place orders, view order history, cancel orders.
 - **AI Chatbot**: Ask questions about products using a RAG-powered assistant.
 - **Watchlist**: Save products for later.
+- **Transactional Emails**: Receive real-time email confirmations for orders.
 
 ### Admin Features
 - **Product Management**: Add, update, view all products (including out-of-stock).
@@ -140,6 +141,17 @@ The backend uses Jasypt for encrypted properties. Key environment variables:
             │ :6379  │ │ :9092  │ │ :2181  │
             └────────┘ └────────┘ └────────┘
 ```
+
+## 📧 Testing Emails
+
+To use real emails, update the `.env` file with your SMTP credentials:
+```properties
+SPRING_MAIL_HOST=smtp.gmail.com
+SPRING_MAIL_PORT=587
+SPRING_MAIL_USERNAME=your-email@gmail.com
+SPRING_MAIL_PASSWORD=your-app-password
+```
+If not configured, emails will be simulated and logged to the backend console.
 
 ## 🧪 Testing Kafka
 

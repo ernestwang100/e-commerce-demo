@@ -32,9 +32,15 @@ This starts MySQL 8.0 on port 3307.
 **Important:** The application uses Jasypt for password encryption. You must provide the encryption password.
 
 ### Environment Variables
-Create a `.env` file (already exists) with your Gemini API key:
-```
+Create a `.env` file (already exists) with your Gemini API key and SMTP credentials:
+```properties
 GEMINI_API_KEY=your_api_key_here
+
+# SMTP Configuration (Optional - for real emails)
+SPRING_MAIL_HOST=smtp.gmail.com
+SPRING_MAIL_PORT=587
+SPRING_MAIL_USERNAME=your-email@gmail.com
+SPRING_MAIL_PASSWORD=your-app-password
 ```
 
 ### Start Command (PowerShell)
