@@ -72,6 +72,7 @@ The application runs on **http://localhost:7070**
 ### User Endpoints (requires USER role)
 - `GET /user/products` - List all in-stock products
 - `GET /user/products/{id}` - Get product details
+- `GET /products/search` - Search products (query, minPrice, maxPrice)
 - `POST /user/orders` - Place an order (triggers Payment Simulation, 10% failure chance)
 - `GET /user/orders` - Get user's order history
 
