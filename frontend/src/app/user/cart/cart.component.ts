@@ -83,7 +83,7 @@ export class CartComponent implements OnInit, OnDestroy {
       next: (order) => {
         this.processing = false;
         this.cartService.clearCart();
-        this.snackBar.open('Order placed successfully!', 'View Orders', {
+        this.snackBar.open('Order placed! Confirmation email sent.', 'View Orders', {
           duration: 5000
         }).onAction().subscribe(() => {
           this.router.navigate(['/user/orders']);
