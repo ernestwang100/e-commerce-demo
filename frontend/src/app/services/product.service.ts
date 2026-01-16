@@ -20,6 +20,15 @@ export class ProductService {
     return this.http.get<Product>(`${environment.apiUrl}/products/${id}`);
   }
 
+  searchProducts(query: string, minPrice?: number, maxPrice?: number): Observable<Product[]> {
+    let params: any = {};
+    if (query) params.query = query;
+    if (minPrice) params.minPrice = minPrice;
+    if (maxPrice) params.maxPrice = maxPrice;
+
+    return this.http.get<Product[]>(`${environment.apiUrl}/products/search`, { params });
+  }
+
   // Admin methods
   createProduct(product: ProductRequest): Observable<Product> {
     return this.http.post<Product>(`${environment.apiUrl}/products`, product);

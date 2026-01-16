@@ -15,6 +15,11 @@ export class DashboardComponent implements OnInit {
   loading = false;
   error = '';
 
+  // Search state
+  searchQuery = '';
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+
   constructor(
     private productService: ProductService,
     private cartService: CartService,
@@ -22,8 +27,18 @@ export class DashboardComponent implements OnInit {
   ) { }
 
   ngOnInit(): void {
+    this.searchProducts();
+  }
+
+  searchProducts(): void {
     this.loading = true;
-    this.productService.getAllProducts()
+    this.error = '';
+
+    // Convert empty strings to undefined/null for the service
+    const min = this.minPrice ? this.minPrice : undefined;
+    const max = this.maxPrice ? this.maxPrice : undefined;
+
+    this.productService.searchProducts(this.searchQuery, min, max)
       .pipe(first())
       .subscribe({
         next: products => {
@@ -31,10 +46,18 @@ export class DashboardComponent implements OnInit {
           this.loading = false;
         },
         error: error => {
-          this.error = error;
+          this.error = 'Failed to load products. Please try again.';
           this.loading = false;
+          console.error('Error loading products:', error);
         }
       });
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.searchProducts();
   }
 
   viewDetails(product: Product): void {
