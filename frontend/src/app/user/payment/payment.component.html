@@ -1,0 +1,42 @@
+<div class="payment-container">
+  <div class="payment-card">
+    <h2>Secure Checkout</h2>
+    <div class="amount-display">
+      <span>Total to Pay:</span>
+      <span class="amount">${{ totalAmount | number:'1.2-2' }}</span>
+    </div>
+
+    <form (ngSubmit)="processPayment()">
+      <mat-form-field appearance="fill" class="full-width">
+        <mat-label>Card Number</mat-label>
+        <input matInput [(ngModel)]="cardNumber" name="cardNumber" placeholder="0000 0000 0000 0000" required>
+        <mat-icon matSuffix>credit_card</mat-icon>
+      </mat-form-field>
+
+      <div class="row">
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>Expiry Date</mat-label>
+          <input matInput [(ngModel)]="expiryDate" name="expiryDate" placeholder="MM/YY" required>
+        </mat-form-field>
+
+        <mat-form-field appearance="fill" class="half-width">
+          <mat-label>CVV</mat-label>
+          <input matInput [(ngModel)]="cvv" name="cvv" placeholder="123" required>
+        </mat-form-field>
+      </div>
+
+      <div class="actions">
+        <button mat-button type="button" routerLink="/user/cart">Back to Cart</button>
+        <button mat-raised-button color="primary" type="submit" [disabled]="processing">
+          <mat-spinner *ngIf="processing" diameter="20"></mat-spinner>
+          <span *ngIf="!processing">Pay Now</span>
+        </button>
+      </div>
+    </form>
+    
+    <div class="simulation-note">
+      <p><strong>Note:</strong> This is a simulation. No actual money is charged.</p>
+      <p>Enter any values to proceed. 10% chance of random failure.</p>
+    </div>
+  </div>
+</div>

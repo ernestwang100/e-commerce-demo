@@ -6,12 +6,14 @@ import { CartComponent } from './cart/cart.component';
 import { OrderHistoryComponent } from './order-history/order-history.component';
 import { WatchlistComponent } from './watchlist/watchlist.component';
 import { ProfileComponent } from './profile/profile.component';
+import { PaymentComponent } from './payment/payment.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
   { path: 'profile', component: ProfileComponent },
   { path: 'products/:id', component: ProductDetailComponent },
   { path: 'cart', component: CartComponent },
+  { path: 'payment', component: PaymentComponent },
   { path: 'orders', component: OrderHistoryComponent },
   { path: 'watchlist', component: WatchlistComponent }
 ];
