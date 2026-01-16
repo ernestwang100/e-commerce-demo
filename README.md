@@ -23,6 +23,7 @@ A full-stack e-commerce application featuring a Spring Boot backend, Angular fro
 - **AI Chatbot**: Ask questions about products using a RAG-powered assistant.
 - **Watchlist**: Save products for later.
 - **Transactional Emails**: Receive real-time email confirmations for orders.
+- **Payment Simulation**: Mock payment processing behavior with randomized failures (Stripe-like).
 
 ### Admin Features
 - **Product Management**: Add, update, view all products (including out-of-stock).
