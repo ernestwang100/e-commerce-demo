@@ -6,8 +6,14 @@ import java.util.Optional;
 
 public interface ProductDao {
     Optional<Product> findById(Integer id);
+
     List<Product> getAllProducts();
+
     List<Product> getInStockProducts();
+
     void save(Product product);
+
     void update(Product product);
+
+    List<Product> searchProducts(String query, Double minPrice, Double maxPrice);
 }

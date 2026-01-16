@@ -6,7 +6,12 @@ import java.util.List;
 
 public interface ProductService {
     List<ProductResponse> getAllProducts(boolean isAdmin);
+
     ProductResponse getProductById(Integer id, boolean isAdmin);
+
     void addProduct(ProductRequest request);
+
     void updateProduct(Integer id, ProductRequest request);
+
+    List<ProductResponse> searchProducts(String query, Double minPrice, Double maxPrice);
 }

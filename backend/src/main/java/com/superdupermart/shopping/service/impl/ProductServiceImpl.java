@@ -37,11 +37,11 @@ public class ProductServiceImpl implements ProductService {
     public ProductResponse getProductById(Integer id, boolean isAdmin) {
         Product product = productDao.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-        
+
         if (!isAdmin && product.getQuantity() <= 0) {
             throw new RuntimeException("Product is out of stock");
         }
-        
+
         return mapToResponse(product, isAdmin);
     }
 
@@ -65,14 +65,25 @@ public class ProductServiceImpl implements ProductService {
     public void updateProduct(Integer id, ProductRequest request) {
         Product product = productDao.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
-        
+
         product.setName(request.getName());
         product.setDescription(request.getDescription());
         product.setWholesalePrice(request.getWholesalePrice());
         product.setRetailPrice(request.getRetailPrice());
         product.setQuantity(request.getQuantity());
-        
+
         productDao.update(product);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<ProductResponse> searchProducts(String query, Double minPrice, Double maxPrice) {
+        List<Product> products = productDao.searchProducts(query, minPrice, maxPrice);
+        boolean isAdmin = false; // Search is public, showing retail prices. Admin can see wholesale in detailed
+                                 // view if needed.
+        return products.stream()
+                .map(p -> mapToResponse(p, isAdmin))
+                .collect(Collectors.toList());
     }
 
     private ProductResponse mapToResponse(Product product, boolean isAdmin) {
@@ -84,7 +95,7 @@ public class ProductServiceImpl implements ProductService {
 
         if (isAdmin) {
             builder.wholesalePrice(product.getWholesalePrice())
-                   .quantity(product.getQuantity());
+                    .quantity(product.getQuantity());
         }
 
         return builder.build();

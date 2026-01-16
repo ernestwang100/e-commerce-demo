@@ -37,6 +37,14 @@ public class ProductController {
         return ResponseEntity.ok(productService.getProductById(id, admin));
     }
 
+    @GetMapping("/search")
+    public ResponseEntity<List<ProductResponse>> searchProducts(
+            @RequestParam(required = false) String query,
+            @RequestParam(required = false) Double minPrice,
+            @RequestParam(required = false) Double maxPrice) {
+        return ResponseEntity.ok(productService.searchProducts(query, minPrice, maxPrice));
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> addProduct(@RequestBody ProductRequest request) {
