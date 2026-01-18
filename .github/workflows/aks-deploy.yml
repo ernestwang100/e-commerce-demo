@@ -69,6 +69,8 @@ jobs:
             --from-literal=mysql-password='${{ secrets.MYSQL_PASSWORD }}' \
             --from-literal=redis-password='${{ secrets.REDIS_PASSWORD }}' \
             --from-literal=gemini-api-key='${{ secrets.GEMINI_API_KEY }}' \
+            --from-literal=mail-username='${{ secrets.MAIL_USERNAME }}' \
+            --from-literal=mail-password='${{ secrets.MAIL_PASSWORD }}' \
             --dry-run=client -o yaml | kubectl apply -f -
 
       # Deploy to AKS
