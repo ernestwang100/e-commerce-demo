@@ -20,6 +20,8 @@ kubectl create secret generic app-secrets \
     --from-literal=mysql-password='password' \
     --from-literal=redis-password='password' \
     --from-literal=gemini-api-key="$GEMINI_API_KEY" \
+    --from-literal=mail-username="${SPRING_MAIL_USERNAME:-placeholder}" \
+    --from-literal=mail-password="${SPRING_MAIL_PASSWORD:-placeholder}" \
     --dry-run=client -o yaml | kubectl apply -f -
 
 echo "Deploying Services..."
