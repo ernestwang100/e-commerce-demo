@@ -64,6 +64,9 @@ jobs:
           containerAppName: shopping-backend
           resourceGroup: shopping-rg
           imageToDeploy: ${{ secrets.REGISTRY_LOGIN_SERVER }}/backend:${{ github.sha }}
+          environmentVariables: |
+            GEMINI_API_KEY=${{ secrets.GEMINI_API_KEY }}
+            ALLOWED_ORIGINS=*
 
       - name: Deploy Frontend to Container App
         uses: azure/container-apps-deploy-action@v1

@@ -7,6 +7,7 @@ RESOURCE_GROUP="shopping-rg"
 ENV_NAME="shopping-env"
 REDIS_PASSWORD="RedisCache2026!"
 DB_PASSWORD="ShoppingDB2026!"
+GEMINI_API_KEY="${GEMINI_API_KEY:-AIzaSyDbE_76suVm8wUhAz7kYGUCH-DXphFh_wc}"
 
 echo "=== Fixing Redis Password Configuration ==="
 az containerapp update \
@@ -38,7 +39,10 @@ az containerapp update \
     "spring.data.redis.ssl.enabled=false" \
     "SPRING_KAFKA_BOOTSTRAP_SERVERS=localhost:9092" \
     "spring.kafka.listener.auto-startup=false" \
-    "ALLOWED_ORIGINS=*"
+    "ALLOWED_ORIGINS=*" \
+    "GEMINI_API_KEY=$GEMINI_API_KEY" \
+    "GOOGLE_GEMINI_CHAT_MODEL=gemini-2.0-flash" \
+    "GOOGLE_GEMINI_EMBEDDING_MODEL=gemini-embedding-001"
 
 echo "=== Restarting Backend ==="
 az containerapp revision restart --name shopping-backend --resource-group $RESOURCE_GROUP
