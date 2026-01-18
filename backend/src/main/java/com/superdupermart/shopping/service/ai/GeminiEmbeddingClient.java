@@ -15,17 +15,19 @@ public class GeminiEmbeddingClient implements EmbeddingClient {
 
     private final WebClient webClient;
 
-    @Value("${google.gemini.api.key}")
-    private String apiKey;
+    private final String apiKey;
+    private final String model;
+    private final String apiBaseUrl;
 
-    @Value("${google.gemini.embedding.model:gemini-embedding-001}")
-    private String model;
-
-    @Value("${google.gemini.embedding.api.url:https://generativelanguage.googleapis.com/v1beta/models}")
-    private String apiBaseUrl;
-
-    public GeminiEmbeddingClient() {
+    public GeminiEmbeddingClient(
+            @Value("${google.gemini.api.key}") String apiKey,
+            @Value("${google.gemini.embedding.model:gemini-embedding-001}") String model,
+            @Value("${google.gemini.embedding.api.url:https://generativelanguage.googleapis.com/v1beta/models}") String apiBaseUrl) {
+        this.apiKey = apiKey;
+        this.model = model;
+        this.apiBaseUrl = apiBaseUrl;
         this.webClient = WebClient.builder()
+                .baseUrl(apiBaseUrl)
                 .build();
     }
 
@@ -53,8 +55,7 @@ public class GeminiEmbeddingClient implements EmbeddingClient {
 
         Map<String, Object> response = webClient.post()
                 .uri(uriBuilder -> uriBuilder
-                        .path(apiBaseUrl.replace("https://generativelanguage.googleapis.com/v1beta", "")
-                                + "/{model}:embedContent")
+                        .path("/{model}:embedContent")
                         .queryParam("key", apiKey)
                         .build(model))
                 .bodyValue(requestBody)
