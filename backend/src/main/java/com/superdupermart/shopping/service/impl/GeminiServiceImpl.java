@@ -20,41 +20,42 @@ public class GeminiServiceImpl implements AIService {
 
     private String apiKey;
 
-    @Value("${google.gemini.model:gemini-2.0-flash}")
+    @Value("${google.gemini.chat.model:gemini-2.0-flash}")
     private String model;
 
-    @Value("${google.gemini.api.url:https://generativelanguage.googleapis.com/v1beta/models}")
+    @Value("${google.gemini.chat.api.url:https://generativelanguage.googleapis.com/v1beta/models}")
     private String apiBaseUrl;
 
     private final ObjectMapper objectMapper;
     private final ProductService productService;
     private final RestTemplate restTemplate;
     private final com.superdupermart.shopping.service.RagService ragService;
-    
+
     @org.springframework.beans.factory.annotation.Autowired(required = false)
     public void setApiKey(@Value("${google.gemini.api.key:}") String apiKey) {
         this.apiKey = apiKey;
     }
 
     private static final String SYSTEM_PROMPT = """
-        You are a helpful customer support assistant for SuperDuper Mart, an online shopping platform.
-        
-        You can help customers with:
-        - Product information and recommendations
-        - Order status inquiries
-        - Return and refund policies
-        - General shopping questions
-        
-        Be friendly, concise, and helpful. If you don't know something, say so honestly.
-        
-        Current store policies:
-        - Free shipping on orders over $50
-        - 30-day return policy for unused items
-        - Customer service hours: 9 AM - 9 PM EST
-        """;
+            You are a helpful customer support assistant for SuperDuper Mart, an online shopping platform.
+
+            You can help customers with:
+            - Product information and recommendations
+            - Order status inquiries
+            - Return and refund policies
+            - General shopping questions
+
+            Be friendly, concise, and helpful. If you don't know something, say so honestly.
+
+            Current store policies:
+            - Free shipping on orders over $50
+            - 30-day return policy for unused items
+            - Customer service hours: 9 AM - 9 PM EST
+            """;
 
     @Autowired
-    public GeminiServiceImpl(ProductService productService, ObjectMapper objectMapper, com.superdupermart.shopping.service.RagService ragService) {
+    public GeminiServiceImpl(ProductService productService, ObjectMapper objectMapper,
+            com.superdupermart.shopping.service.RagService ragService) {
         this.productService = productService;
         this.objectMapper = objectMapper;
         this.restTemplate = new RestTemplate();
@@ -74,7 +75,8 @@ public class GeminiServiceImpl implements AIService {
         while (retryCount <= maxRetries) {
             try {
                 // Retrieve relevant documents via RAG
-                List<org.springframework.ai.document.Document> retrievedDocs = ragService.retrieveDocuments(userMessage);
+                List<org.springframework.ai.document.Document> retrievedDocs = ragService
+                        .retrieveDocuments(userMessage);
                 String ragContext = formatRagContext(retrievedDocs);
 
                 // Build Gemini API URL
@@ -82,33 +84,34 @@ public class GeminiServiceImpl implements AIService {
 
                 // Build contents array for Gemini
                 ArrayNode contents = objectMapper.createArrayNode();
-                
+
                 // Add system instruction as first user message context
                 ObjectNode systemContext = objectMapper.createObjectNode();
                 systemContext.put("role", "user");
                 ArrayNode systemParts = objectMapper.createArrayNode();
                 ObjectNode systemPart = objectMapper.createObjectNode();
-                
-                String fullSystemPrompt = "System context: " + SYSTEM_PROMPT + 
-                                          buildContextInfo() + 
-                                          "\n\nRelevant Product Information:\n" + ragContext +
-                                          "\n\nNow respond to user messages as this assistant.";
-                                          
+
+                String fullSystemPrompt = "System context: " + SYSTEM_PROMPT +
+                        buildContextInfo() +
+                        "\n\nRelevant Product Information:\n" + ragContext +
+                        "\n\nNow respond to user messages as this assistant.";
+
                 systemPart.put("text", fullSystemPrompt);
                 systemParts.add(systemPart);
                 systemContext.set("parts", systemParts);
                 contents.add(systemContext);
-                
+
                 // Add model acknowledgment
                 ObjectNode modelAck = objectMapper.createObjectNode();
                 modelAck.put("role", "model");
                 ArrayNode modelParts = objectMapper.createArrayNode();
                 ObjectNode modelPart = objectMapper.createObjectNode();
-                modelPart.put("text", "Understood. I have access to the store's product information. How can I help you today?");
+                modelPart.put("text",
+                        "Understood. I have access to the store's product information. How can I help you today?");
                 modelParts.add(modelPart);
                 modelAck.set("parts", modelParts);
                 contents.add(modelAck);
-                
+
                 // Conversation history (limit to last 10 messages)
                 int startIdx = Math.max(0, conversationHistory.size() - 10);
                 for (int i = startIdx; i < conversationHistory.size(); i++) {
@@ -122,7 +125,7 @@ public class GeminiServiceImpl implements AIService {
                     historyMsg.set("parts", parts);
                     contents.add(historyMsg);
                 }
-                
+
                 // Current user message
                 ObjectNode userMsg = objectMapper.createObjectNode();
                 userMsg.put("role", "user");
@@ -136,7 +139,7 @@ public class GeminiServiceImpl implements AIService {
                 // Build request body
                 ObjectNode requestBody = objectMapper.createObjectNode();
                 requestBody.set("contents", contents);
-                
+
                 // Generation config
                 ObjectNode generationConfig = objectMapper.createObjectNode();
                 generationConfig.put("temperature", 0.7);
@@ -148,25 +151,23 @@ public class GeminiServiceImpl implements AIService {
                 headers.setContentType(MediaType.APPLICATION_JSON);
 
                 HttpEntity<String> entity = new HttpEntity<>(
-                    objectMapper.writeValueAsString(requestBody), 
-                    headers
-                );
+                        objectMapper.writeValueAsString(requestBody),
+                        headers);
 
                 // Call Gemini API
                 ResponseEntity<String> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.POST,
-                    entity,
-                    String.class
-                );
+                        url,
+                        HttpMethod.POST,
+                        entity,
+                        String.class);
 
                 // Parse response
                 JsonNode responseJson = objectMapper.readTree(response.getBody());
                 return responseJson
-                    .path("candidates").get(0)
-                    .path("content")
-                    .path("parts").get(0)
-                    .path("text").asText();
+                        .path("candidates").get(0)
+                        .path("content")
+                        .path("parts").get(0)
+                        .path("text").asText();
 
             } catch (Exception e) {
                 // Check for 429 Too Many Requests
@@ -185,11 +186,12 @@ public class GeminiServiceImpl implements AIService {
                         return "Request interrupted.";
                     }
                 }
-                
+
                 // Log full error
                 System.err.println("Gemini API Error: " + e.getMessage());
                 e.printStackTrace();
-                return "I apologize, but I'm having trouble processing your request. Please try again later or contact our support team. Error: " + e.getMessage();
+                return "I apologize, but I'm having trouble processing your request. Please try again later or contact our support team. Error: "
+                        + e.getMessage();
             }
         }
         return "Service unavailable.";
@@ -197,24 +199,24 @@ public class GeminiServiceImpl implements AIService {
 
     private String buildContextInfo() {
         StringBuilder context = new StringBuilder("\n\nCurrent store information:\n");
-        
+
         try {
             int totalProducts = productService.getAllProducts(false).size();
             context.append("- Total products available: ").append(totalProducts).append("\n");
         } catch (Exception e) {
             // Ignore if service unavailable
         }
-        
+
         return context.toString();
     }
-    
+
     private String formatRagContext(List<org.springframework.ai.document.Document> docs) {
         if (docs == null || docs.isEmpty()) {
             return "No specific product information found.";
         }
         return docs.stream()
-            .map(org.springframework.ai.document.Document::getContent)
-            .reduce((a, b) -> a + "\n---\n" + b)
-            .orElse("");
+                .map(org.springframework.ai.document.Document::getContent)
+                .reduce((a, b) -> a + "\n---\n" + b)
+                .orElse("");
     }
 }

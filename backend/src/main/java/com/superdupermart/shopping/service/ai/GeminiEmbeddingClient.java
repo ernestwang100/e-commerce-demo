@@ -14,15 +14,18 @@ import java.util.Map;
 public class GeminiEmbeddingClient implements EmbeddingClient {
 
     private final WebClient webClient;
-    
+
     @Value("${google.gemini.api.key}")
     private String apiKey;
-    
-    private final String MODEL = "text-embedding-004";
+
+    @Value("${google.gemini.embedding.model:gemini-embedding-001}")
+    private String model;
+
+    @Value("${google.gemini.embedding.api.url:https://generativelanguage.googleapis.com/v1beta/models}")
+    private String apiBaseUrl;
 
     public GeminiEmbeddingClient() {
         this.webClient = WebClient.builder()
-                .baseUrl("https://generativelanguage.googleapis.com/v1beta")
                 .build();
     }
 
@@ -44,21 +47,20 @@ public class GeminiEmbeddingClient implements EmbeddingClient {
     @SuppressWarnings("unchecked")
     private List<Double> callEmbeddingApi(String text) {
         Map<String, Object> requestBody = Map.of(
-            "model", "models/" + MODEL,
-            "content", Map.of(
-                "parts", List.of(Map.of("text", text))
-            )
-        );
+                "model", "models/" + model,
+                "content", Map.of(
+                        "parts", List.of(Map.of("text", text))));
 
         Map<String, Object> response = webClient.post()
-            .uri(uriBuilder -> uriBuilder
-                .path("/models/{model}:embedContent")
-                .queryParam("key", apiKey)
-                .build(MODEL))
-            .bodyValue(requestBody)
-            .retrieve()
-            .bodyToMono(Map.class)
-            .block();
+                .uri(uriBuilder -> uriBuilder
+                        .path(apiBaseUrl.replace("https://generativelanguage.googleapis.com/v1beta", "")
+                                + "/{model}:embedContent")
+                        .queryParam("key", apiKey)
+                        .build(model))
+                .bodyValue(requestBody)
+                .retrieve()
+                .bodyToMono(Map.class)
+                .block();
 
         if (response != null && response.containsKey("embedding")) {
             Map<String, Object> embedding = (Map<String, Object>) response.get("embedding");

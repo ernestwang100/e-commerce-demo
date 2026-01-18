@@ -29,27 +29,27 @@ public class SecurityConfig {
     }
 
     // Hardcoded for debugging to ensure no env var parsing issues
-    private String allowedOrigins = "https://shopping-frontend.greengrass-56c2de65.eastus.azurecontainerapps.io";
+    @Value("${allowed.origins:http://localhost:14200,http://localhost:4200,https://shopping-frontend.greengrass-56c2de65.eastus.azurecontainerapps.io}")
+    private String allowedOrigins;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/login", "/signup", "/version").permitAll()
-                .requestMatchers("/products/**").permitAll()
-                .requestMatchers("/orders/**").authenticated()
-                .requestMatchers("/watchlist/**").authenticated()
-                .requestMatchers("/chat/**").authenticated()
-                .requestMatchers("/stats/**").authenticated()
-                .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
-                .requestMatchers("/user/**").hasAuthority("ROLE_USER")
-                .anyRequest().authenticated()
-            )
-            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
-        
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers("/login", "/signup", "/version").permitAll()
+                        .requestMatchers("/products/**").permitAll()
+                        .requestMatchers("/orders/**").authenticated()
+                        .requestMatchers("/watchlist/**").authenticated()
+                        .requestMatchers("/chat/**").authenticated()
+                        .requestMatchers("/stats/**").authenticated()
+                        .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/user/**").hasAuthority("ROLE_USER")
+                        .anyRequest().authenticated())
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
         return http.build();
     }
 
