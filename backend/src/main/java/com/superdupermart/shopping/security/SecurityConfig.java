@@ -38,14 +38,10 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-                .csrf(csrf -> csrf.disable())
+                .csrf(csrf -> csrf.disable()) // CSRF is already disabled globally, which includes chat endpoints.
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/login", "/signup", "/version").permitAll()
-                        .requestMatchers("/products/**").permitAll()
-                        .requestMatchers("/orders/**").authenticated()
-                        .requestMatchers("/watchlist/**").authenticated()
-                        .requestMatchers("/chat/**").authenticated()
+                        .requestMatchers("/api/auth/**", "/api/products/**", "/version", "/api/chat/**").permitAll()
                         .requestMatchers("/stats/**").authenticated()
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/user/**").hasAuthority("ROLE_USER")

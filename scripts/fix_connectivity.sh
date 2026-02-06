@@ -22,6 +22,12 @@ REDIS_URL="shopping-redis"
 
 echo "Using Internal Names: $MYSQL_URL, $REDIS_URL"
 
+echo "=== Updating Backend Secrets ==="
+az containerapp secret set \
+  --name shopping-backend \
+  --resource-group $RESOURCE_GROUP \
+  --secrets "db-password=$DB_PASSWORD" "redis-password=$REDIS_PASSWORD"
+
 echo "=== Updating Backend Configuration ==="
 # Set spring.kafka.listener.auto-startup=false to prevent startup crash if Kafka is missing
 # Also ensuring all properties map correctly to Spring Boot expectations
