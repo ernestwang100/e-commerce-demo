@@ -9,19 +9,18 @@ REDIS_PASSWORD="RedisCache2026!"
 DB_PASSWORD="ShoppingDB2026!"
 GEMINI_API_KEY="${GEMINI_API_KEY:-AIzaSyDbE_76suVm8wUhAz7kYGUCH-DXphFh_wc}"
 
-echo "=== Fixing Redis Password Configuration ==="
+# Skip Redis update if it fails, focus on backend
+echo "=== Updating Redis Configuration ==="
 az containerapp update \
   --name shopping-redis \
   --resource-group $RESOURCE_GROUP \
-  --set-env-vars "REDIS_PASSWORD=$REDIS_PASSWORD" \
-  --command "/bin/sh" "-c" "redis-server --requirepass $REDIS_PASSWORD"
+  --set-env-vars "REDIS_PASSWORD=$REDIS_PASSWORD" || echo "Redis update skipped/failed"
 
-# Get the internal FQDNs again to be sure
-MYSQL_URL=$(az containerapp show --name shopping-mysql --resource-group $RESOURCE_GROUP --query properties.configuration.ingress.fqdn -o tsv)
-REDIS_URL=$(az containerapp show --name shopping-redis --resource-group $RESOURCE_GROUP --query properties.configuration.ingress.fqdn -o tsv)
+# Using internal short names for reliability within the same environment
+MYSQL_URL="shopping-mysql"
+REDIS_URL="shopping-redis"
 
-echo "MySQL Internal: $MYSQL_URL"
-echo "Redis Internal: $REDIS_URL"
+echo "Using Internal Names: $MYSQL_URL, $REDIS_URL"
 
 echo "=== Updating Backend Configuration ==="
 # Set spring.kafka.listener.auto-startup=false to prevent startup crash if Kafka is missing
@@ -39,7 +38,7 @@ az containerapp update \
     "spring.data.redis.ssl.enabled=false" \
     "SPRING_KAFKA_BOOTSTRAP_SERVERS=localhost:9092" \
     "spring.kafka.listener.auto-startup=false" \
-    "ALLOWED_ORIGINS=*" \
+    "ALLOWED_ORIGINS=https://shopping-frontend.greengrass-56c2de65.eastus.azurecontainerapps.io" \
     "GEMINI_API_KEY=$GEMINI_API_KEY" \
     "GOOGLE_GEMINI_CHAT_MODEL=gemini-2.0-flash" \
     "GOOGLE_GEMINI_EMBEDDING_MODEL=gemini-embedding-001"
