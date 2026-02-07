@@ -41,8 +41,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // CSRF is already disabled globally, which includes chat endpoints.
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/auth/**", "/api/products/**", "/version", "/api/chat/**").permitAll()
-                        .requestMatchers("/stats/**").authenticated()
+                        .requestMatchers("/login", "/signup", "/version", "/chat/**", "/products/**").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/user/**").hasAuthority("ROLE_USER")
                         .anyRequest().authenticated())
