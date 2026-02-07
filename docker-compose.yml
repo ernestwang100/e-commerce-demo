@@ -81,7 +81,7 @@ services:
       - SPRING_DATA_REDIS_PORT=6379
       - SPRING_KAFKA_BOOTSTRAP_SERVERS=kafka:29092
     ports:
-      - "17070:7070"
+      - "7070:7070"
     networks:
       - shopping-network
 
@@ -89,7 +89,7 @@ services:
     build: ./frontend
     container_name: shopping-frontend
     ports:
-      - "14200:80"
+      - "4200:80"
     depends_on:
       - backend
     networks:
