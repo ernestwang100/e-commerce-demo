@@ -1,14 +1,6 @@
 <div class="admin-dashboard">
   <h1>Admin Dashboard</h1>
 
-  <div class="quick-actions">
-    <button mat-raised-button color="primary" (click)="goToProducts()">
-      <mat-icon>inventory</mat-icon> Manage Products
-    </button>
-    <button mat-raised-button color="accent" (click)="goToOrders()">
-      <mat-icon>receipt_long</mat-icon> Manage Orders
-    </button>
-  </div>
 
   <div *ngIf="error" class="error">
     <mat-icon>error</mat-icon> {{ error }}
