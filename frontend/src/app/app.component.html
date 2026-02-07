@@ -4,31 +4,48 @@
     <span class="brand-name">SuperDuper Mart</span>
   </div>
   <span class="spacer"></span>
-  <button mat-button routerLink="/user">Shop</button>
+  <button mat-button routerLink="/user" *ngIf="!isAdmin">Shop</button>
   <ng-container *ngIf="!(authService.user | async); else loggedIn">
     <button mat-button routerLink="/auth/login">Login</button>
     <button mat-button routerLink="/auth/register">Register</button>
   </ng-container>
   <ng-template #loggedIn>
-    <button mat-button routerLink="/user/cart" class="nav-btn">
-      <mat-icon [matBadge]="cartCount" [matBadgeHidden]="cartCount === 0" matBadgeColor="accent">shopping_cart</mat-icon>
-      <span class="btn-text">Cart</span>
-    </button>
-    <button mat-button routerLink="/user/orders" class="nav-btn">
-      <mat-icon>receipt_long</mat-icon>
-      <span class="btn-text">Orders</span>
-    </button>
-    <button mat-button routerLink="/user/watchlist" class="nav-btn">
-      <mat-icon>favorite</mat-icon>
-      <span class="btn-text">Watchlist</span>
-    </button>
-    <button mat-button routerLink="/user/payment" class="nav-btn">
-      <mat-icon>payment</mat-icon>
-      <span class="btn-text">Payment</span>
-    </button>
-    <button mat-button routerLink="/admin" *ngIf="isAdmin">
-      <mat-icon>admin_panel_settings</mat-icon> Admin
-    </button>
+    <!-- Admin Menu -->
+    <ng-container *ngIf="isAdmin">
+      <button mat-button routerLink="/admin/products" class="nav-btn">
+        <mat-icon>inventory_2</mat-icon>
+        <span class="btn-text">Manage Products</span>
+      </button>
+      <button mat-button routerLink="/admin/orders" class="nav-btn">
+        <mat-icon>list_alt</mat-icon>
+        <span class="btn-text">Manage Orders</span>
+      </button>
+      <button mat-button routerLink="/user/profile" class="nav-btn">
+        <mat-icon>person</mat-icon>
+        <span class="btn-text">Profile</span>
+      </button>
+    </ng-container>
+
+    <!-- User Menu -->
+    <ng-container *ngIf="!isAdmin">
+      <button mat-button routerLink="/user/cart" class="nav-btn">
+        <mat-icon [matBadge]="cartCount" [matBadgeHidden]="cartCount === 0" matBadgeColor="accent">shopping_cart</mat-icon>
+        <span class="btn-text">Cart</span>
+      </button>
+      <button mat-button routerLink="/user/orders" class="nav-btn">
+        <mat-icon>receipt_long</mat-icon>
+        <span class="btn-text">Orders</span>
+      </button>
+      <button mat-button routerLink="/user/watchlist" class="nav-btn">
+        <mat-icon>favorite</mat-icon>
+        <span class="btn-text">Watchlist</span>
+      </button>
+      <button mat-button routerLink="/user/payment" class="nav-btn">
+        <mat-icon>payment</mat-icon>
+        <span class="btn-text">Payment</span>
+      </button>
+    </ng-container>
+    
     <button mat-button (click)="logout()">Logout</button>
   </ng-template>
 </mat-toolbar>
