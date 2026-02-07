@@ -61,7 +61,7 @@ export class DashboardComponent implements OnInit {
   }
 
   viewDetails(product: Product): void {
-    this.router.navigate(['/user/product', product.id]);
+    this.router.navigate(['/user/products', product.id]);
   }
 
   addToCart(product: Product): void {
