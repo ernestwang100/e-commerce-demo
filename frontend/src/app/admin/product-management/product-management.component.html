@@ -28,6 +28,20 @@
         </div>
 
         <div class="form-row">
+          <div class="file-upload">
+            <label>Product Image</label>
+            <input type="file" (change)="onFileSelected($event)" accept="image/*" #fileInput style="display: none;">
+            <div class="upload-btn-wrapper">
+              <button mat-stroked-button type="button" (click)="fileInput.click()">Choose Image</button>
+              <span *ngIf="selectedFile">{{ selectedFile.name }}</span>
+            </div>
+            <div class="image-preview" *ngIf="imagePreview">
+              <img [src]="imagePreview" alt="Preview">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
           <mat-form-field appearance="outline">
             <mat-label>Wholesale Price</mat-label>
             <input matInput type="number" formControlName="wholesalePrice">
@@ -67,6 +81,15 @@
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef>ID</th>
       <td mat-cell *matCellDef="let product">{{ product.id }}</td>
+    </ng-container>
+
+    <ng-container matColumnDef="image">
+      <th mat-header-cell *matHeaderCellDef>Image</th>
+      <td mat-cell *matCellDef="let product">
+        <img *ngIf="product.image" [src]="'data:' + product.imageContentType + ';base64,' + product.image" 
+             alt="Product" style="width: 50px; height: 50px; object-fit: cover; border-radius: 4px;">
+        <span *ngIf="!product.image" class="no-image">No Image</span>
+      </td>
     </ng-container>
 
     <ng-container matColumnDef="name">
