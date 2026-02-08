@@ -20,21 +20,25 @@ public class ProductResponse implements Serializable {
     private String name;
     private String description;
     private BigDecimal retailPrice;
-    
+
     // Admin only fields
     private BigDecimal wholesalePrice;
     private Integer quantity;
+    private byte[] image;
+    private String imageContentType;
 
     public static ProductResponse fromEntity(com.superdupermart.shopping.entity.Product product, boolean isAdmin) {
         ProductResponseBuilder builder = ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
-                .retailPrice(product.getRetailPrice());
-        
+                .retailPrice(product.getRetailPrice())
+                .image(product.getImage())
+                .imageContentType(product.getImageContentType());
+
         if (isAdmin) {
             builder.wholesalePrice(product.getWholesalePrice())
-                   .quantity(product.getQuantity());
+                    .quantity(product.getQuantity());
         }
         return builder.build();
     }

@@ -28,18 +28,22 @@ public class JwtFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
-        
+
+        System.out.println("JwtFilter: Processing " + request.getMethod() + " " + request.getRequestURI());
         Optional<AuthUserDetail> authUserDetailOptional = jwtProvider.resolveToken(request);
 
-        if (authUserDetailOptional.isPresent()){
+        if (authUserDetailOptional.isPresent()) {
             AuthUserDetail authUserDetail = authUserDetailOptional.get();
+            System.out.println("JwtFilter: Token resolved for User: " + authUserDetail.getUsername());
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                    authUserDetail, 
+                    authUserDetail,
                     null,
-                    authUserDetail.getAuthorities()
-            );
+                    authUserDetail.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
+            System.out.println("JwtFilter: SecurityContext set.");
+        } else {
+            System.out.println("JwtFilter: No token resolved.");
         }
 
         filterChain.doFilter(request, response);

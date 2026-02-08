@@ -30,21 +30,58 @@ public class Product {
     @Column(nullable = false)
     private Integer quantity;
 
-    public Integer getId() { return id; }
-    public void setId(Integer id) { this.id = id; }
+    @Lob
+    @Column(columnDefinition = "LONGBLOB")
+    private byte[] image;
 
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
+    @Column(name = "image_content_type")
+    private String imageContentType;
 
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
+    public Integer getId() {
+        return id;
+    }
 
-    public BigDecimal getWholesalePrice() { return wholesalePrice; }
-    public void setWholesalePrice(BigDecimal wholesalePrice) { this.wholesalePrice = wholesalePrice; }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-    public BigDecimal getRetailPrice() { return retailPrice; }
-    public void setRetailPrice(BigDecimal retailPrice) { this.retailPrice = retailPrice; }
+    public String getName() {
+        return name;
+    }
 
-    public Integer getQuantity() { return quantity; }
-    public void setQuantity(Integer quantity) { this.quantity = quantity; }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public BigDecimal getWholesalePrice() {
+        return wholesalePrice;
+    }
+
+    public void setWholesalePrice(BigDecimal wholesalePrice) {
+        this.wholesalePrice = wholesalePrice;
+    }
+
+    public BigDecimal getRetailPrice() {
+        return retailPrice;
+    }
+
+    public void setRetailPrice(BigDecimal retailPrice) {
+        this.retailPrice = retailPrice;
+    }
+
+    public Integer getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(Integer quantity) {
+        this.quantity = quantity;
+    }
 }
