@@ -14,7 +14,8 @@
 
   <div *ngIf="product && !loading" class="product-content">
     <div class="product-image">
-      <div class="image-placeholder">
+      <img *ngIf="product.image" [src]="'data:' + product.imageContentType + ';base64,' + product.image" alt="{{ product.name }}" class="detail-image">
+      <div class="image-placeholder" *ngIf="!product.image">
         <mat-icon>inventory_2</mat-icon>
       </div>
     </div>

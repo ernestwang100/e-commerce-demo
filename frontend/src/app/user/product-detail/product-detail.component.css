@@ -33,6 +33,15 @@
     align-items: center;
 }
 
+.detail-image {
+    width: 100%;
+    max-width: 400px;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(102, 126, 234, 0.3);
+}
+
 .image-placeholder {
     width: 100%;
     max-width: 400px;
