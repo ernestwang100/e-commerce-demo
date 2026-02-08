@@ -22,4 +22,6 @@ public interface ProductService {
     com.superdupermart.shopping.entity.Product getProductEntity(Integer id);
 
     void syncAllProducts();
+
+    void deleteProduct(Integer id);
 }

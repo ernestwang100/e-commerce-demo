@@ -20,4 +20,6 @@ public interface ProductDao {
     List<Product> getPaginatedProducts(int page, int size);
 
     long countProducts();
+
+    void delete(Integer id);
 }

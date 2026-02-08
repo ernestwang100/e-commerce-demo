@@ -92,4 +92,12 @@ public class ProductDaoImpl implements ProductDao {
     public long countProducts() {
         return entityManager.createQuery("SELECT COUNT(p) FROM Product p", Long.class).getSingleResult();
     }
+
+    @Override
+    public void delete(Integer id) {
+        Product product = entityManager.find(Product.class, id);
+        if (product != null) {
+            entityManager.remove(product);
+        }
+    }
 }

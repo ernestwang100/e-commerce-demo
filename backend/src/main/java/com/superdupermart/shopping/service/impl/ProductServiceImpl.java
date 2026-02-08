@@ -173,6 +173,16 @@ public class ProductServiceImpl implements ProductService {
         productSearchRepository.saveAll(docs);
     }
 
+    @Override
+    @Transactional
+    @CacheEvict(value = { "products", "product", "product_search" }, allEntries = true)
+    public void deleteProduct(Integer id) {
+        Product product = productDao.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        productDao.delete(id);
+        productSearchRepository.deleteById(id);
+    }
+
     // Helper to sync
     private void saveToElasticsearch(Product product) {
         ProductDocument doc = ProductDocument.builder()
