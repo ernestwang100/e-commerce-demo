@@ -177,6 +177,25 @@ docker logs shopping-backend --tail 20
 # Look for: "Received order event: Order placed successfully..."
 ```
 
+## ⚡ Load Testing
+We use [k6](https://k6.io/) for load testing. You can run the tests using Docker without installing k6 locally.
+
+### Prerequisite
+Ensure the application is running (`docker-compose up -d`).
+
+### Run the Test
+This script simulates a ramp-up to **500 concurrent users** over 3 minutes.
+
+```bash
+# Run k6 via Docker (Windows/Linux/Mac)
+docker run --rm -i --network="host" grafana/k6 run -e BASE_URL=http://localhost:7070 - < tests/k6/load_test.js
+```
+
+### Interpretation
+- **http_req_duration**: The total time for the request. Look at `p(95)` (95th percentile).
+- **checks**: Success rate of requests (should be 100%).
+- **vus**: Number of Virtual Users (concurrency).
+
 ## 📝 License
 
 MIT License
