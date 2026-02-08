@@ -1,0 +1,6 @@
+target/*
+!target/shopping-app-0.0.1-SNAPSHOT.jar
+.git
+.mvn
+src/test
+*.log

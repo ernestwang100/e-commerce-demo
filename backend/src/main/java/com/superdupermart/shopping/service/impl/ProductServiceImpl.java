@@ -125,6 +125,12 @@ public class ProductServiceImpl implements ProductService {
 
         return docs.stream()
                 .map(this::mapDocumentToResponse)
+                .peek(response -> {
+                    // Hydrate image data from DB since it's not in Elasticsearch
+                    productDao.findById(response.getId()).ifPresent(product -> {
+                        response.setImage(product.getImage());
+                    });
+                })
                 .collect(Collectors.toList());
     }
 
@@ -149,6 +155,22 @@ public class ProductServiceImpl implements ProductService {
     public Product getProductEntity(Integer id) {
         return productDao.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+    @Override
+    @Transactional
+    public void syncAllProducts() {
+        List<Product> products = productDao.getAllProducts();
+        List<ProductDocument> docs = products.stream()
+                .map(product -> ProductDocument.builder()
+                        .id(product.getId())
+                        .name(product.getName())
+                        .description(product.getDescription())
+                        .price(product.getRetailPrice())
+                        .imageContentType(product.getImageContentType())
+                        .build())
+                .collect(Collectors.toList());
+        productSearchRepository.saveAll(docs);
     }
 
     // Helper to sync

@@ -20,4 +20,6 @@ public interface ProductService {
     void uploadProductImage(Integer id, org.springframework.web.multipart.MultipartFile file);
 
     com.superdupermart.shopping.entity.Product getProductEntity(Integer id);
+
+    void syncAllProducts();
 }

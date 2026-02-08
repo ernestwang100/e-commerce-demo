@@ -112,4 +112,11 @@ public class ProductController {
     public ResponseEntity<List<?>> getMostPopular(@PathVariable Integer limit) {
         return ResponseEntity.ok(statsService.getAdminStats().getMostPopular());
     }
+
+    @PostMapping("/sync")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> syncAllProducts() {
+        productService.syncAllProducts();
+        return ResponseEntity.ok("Products synced to Elasticsearch successfully");
+    }
 }
