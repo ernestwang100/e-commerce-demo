@@ -7,6 +7,7 @@ import com.superdupermart.shopping.dto.OrderItemRequest;
 import com.superdupermart.shopping.dto.OrderItemResponse;
 import com.superdupermart.shopping.dto.OrderRequest;
 import com.superdupermart.shopping.dto.OrderResponse;
+import com.superdupermart.shopping.dto.PageResponse; // Import
 import com.superdupermart.shopping.entity.Order;
 import com.superdupermart.shopping.entity.OrderItem;
 import com.superdupermart.shopping.entity.Product;
@@ -147,10 +148,22 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderResponse> getPaginatedOrders(int page) {
-        return orderDao.getPaginatedOrders(page, 5).stream()
+    public PageResponse<OrderResponse> getOrdersPage(int page, int size) {
+        List<Order> orders = orderDao.getPaginatedOrders(page, size);
+        long totalElements = orderDao.countOrders();
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        List<OrderResponse> content = orders.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
+
+        return PageResponse.<OrderResponse>builder()
+                .content(content)
+                .totalElements(totalElements)
+                .totalPages(totalPages)
+                .size(size)
+                .number(page)
+                .build();
     }
 
     private OrderResponse mapToResponse(Order order) {

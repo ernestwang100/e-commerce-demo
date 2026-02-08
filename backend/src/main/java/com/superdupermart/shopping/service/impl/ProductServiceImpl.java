@@ -1,6 +1,7 @@
 package com.superdupermart.shopping.service.impl;
 
 import com.superdupermart.shopping.dao.ProductDao;
+import com.superdupermart.shopping.dto.PageResponse;
 import com.superdupermart.shopping.dto.ProductRequest;
 import com.superdupermart.shopping.dto.ProductResponse;
 import com.superdupermart.shopping.entity.Product;
@@ -29,8 +30,27 @@ public class ProductServiceImpl implements ProductService {
     public List<ProductResponse> getAllProducts(boolean isAdmin) {
         List<Product> products = isAdmin ? productDao.getAllProducts() : productDao.getInStockProducts();
         return products.stream()
-                .map(p -> mapToResponse(p, isAdmin))
+                .map(product -> mapToResponse(product, isAdmin))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public PageResponse<ProductResponse> getProductsPage(int page, int size) {
+        List<Product> products = productDao.getPaginatedProducts(page, size);
+        long totalElements = productDao.countProducts();
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        List<ProductResponse> content = products.stream()
+                .map(product -> mapToResponse(product, true)) // Admin view
+                .collect(Collectors.toList());
+
+        return PageResponse.<ProductResponse>builder()
+                .content(content)
+                .totalElements(totalElements)
+                .totalPages(totalPages)
+                .size(size)
+                .number(page)
+                .build();
     }
 
     @Override

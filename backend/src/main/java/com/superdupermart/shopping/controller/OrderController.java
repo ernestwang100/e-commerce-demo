@@ -34,15 +34,16 @@ public class OrderController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> getAllOrders(@RequestParam(defaultValue = "1") int page,
-                                               @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "5") int size) {
         if (SecurityUtils.isAdmin()) {
-             return ResponseEntity.ok(orderService.getPaginatedOrders(page)); 
+            return ResponseEntity.ok(orderService.getOrdersPage(page, size));
         } else {
-             Integer userId = SecurityUtils.getCurrentUserId();
-             // Current Service implementation doesn't have pagination for user orders specifically, 
-             // but we can filter or just return all for now if small. 
-             // Aligning with standard paginated response if possible.
-             return ResponseEntity.ok(orderService.getOrdersByUser(userId));
+            Integer userId = SecurityUtils.getCurrentUserId();
+            // Current Service implementation doesn't have pagination for user orders
+            // specifically,
+            // but we can filter or just return all for now if small.
+            // Aligning with standard paginated response if possible.
+            return ResponseEntity.ok(orderService.getOrdersByUser(userId));
         }
     }
 
@@ -50,7 +51,8 @@ public class OrderController {
     public ResponseEntity<Map<String, String>> cancelOrder(@PathVariable Integer id) {
         boolean isAdmin = SecurityUtils.isAdmin();
         Integer userId = SecurityUtils.getCurrentUserId();
-        // If admin, userId doesn't matter for ownership check in service usually, or we pass null/admin flag
+        // If admin, userId doesn't matter for ownership check in service usually, or we
+        // pass null/admin flag
         orderService.cancelOrder(id, userId, isAdmin);
         return ResponseEntity.ok(Collections.singletonMap("message", "Order canceled successfully"));
     }

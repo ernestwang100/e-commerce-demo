@@ -7,6 +7,8 @@ import java.util.List;
 public interface ProductService {
     List<ProductResponse> getAllProducts(boolean isAdmin);
 
+    com.superdupermart.shopping.dto.PageResponse<ProductResponse> getProductsPage(int page, int size);
+
     ProductResponse getProductById(Integer id, boolean isAdmin);
 
     ProductResponse addProduct(ProductRequest request);

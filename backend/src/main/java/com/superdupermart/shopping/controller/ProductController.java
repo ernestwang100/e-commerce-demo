@@ -45,6 +45,13 @@ public class ProductController {
         return ResponseEntity.ok(productService.searchProducts(query, minPrice, maxPrice));
     }
 
+    @GetMapping
+    public ResponseEntity<com.superdupermart.shopping.dto.PageResponse<ProductResponse>> getProducts(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "5") int size) {
+        return ResponseEntity.ok(productService.getProductsPage(page, size));
+    }
+
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductResponse> addProduct(@RequestBody ProductRequest request) {

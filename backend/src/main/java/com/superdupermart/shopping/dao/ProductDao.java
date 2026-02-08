@@ -16,4 +16,8 @@ public interface ProductDao {
     void update(Product product);
 
     List<Product> searchProducts(String query, Double minPrice, Double maxPrice);
+
+    List<Product> getPaginatedProducts(int page, int size);
+
+    long countProducts();
 }

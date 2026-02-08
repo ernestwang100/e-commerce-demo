@@ -79,4 +79,17 @@ public class ProductDaoImpl implements ProductDao {
 
         return entityManager.createQuery(cq).getResultList();
     }
+
+    @Override
+    public List<Product> getPaginatedProducts(int page, int size) {
+        return entityManager.createQuery("SELECT p FROM Product p ORDER BY p.id DESC", Product.class)
+                .setFirstResult((page - 1) * size)
+                .setMaxResults(size)
+                .getResultList();
+    }
+
+    @Override
+    public long countProducts() {
+        return entityManager.createQuery("SELECT COUNT(p) FROM Product p", Long.class).getSingleResult();
+    }
 }
