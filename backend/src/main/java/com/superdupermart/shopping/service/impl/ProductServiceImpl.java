@@ -54,6 +54,7 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
+    @Cacheable(value = "product", key = "#id")
     public ProductResponse getProductById(Integer id, boolean isAdmin) {
         Product product = productDao.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -67,7 +68,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    @CacheEvict(value = "products", allEntries = true)
+    @CacheEvict(value = { "products", "product", "product_search" }, allEntries = true)
     public ProductResponse addProduct(ProductRequest request) {
         Product product = Product.builder()
                 .name(request.getName())
@@ -82,7 +83,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    @CacheEvict(value = "products", allEntries = true)
+    @CacheEvict(value = { "products", "product", "product_search" }, allEntries = true)
     public ProductResponse updateProduct(Integer id, ProductRequest request) {
         Product product = productDao.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -99,6 +100,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
+    @Cacheable(value = "product_search", key = "{#query, #minPrice, #maxPrice}")
     public List<ProductResponse> searchProducts(String query, Double minPrice, Double maxPrice) {
         List<Product> products = productDao.searchProducts(query, minPrice, maxPrice);
         boolean isAdmin = false; // Search is public, showing retail prices. Admin can see wholesale in detailed
@@ -110,7 +112,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
-    @CacheEvict(value = "products", allEntries = true)
+    @CacheEvict(value = { "products", "product", "product_search" }, allEntries = true)
     public void uploadProductImage(Integer id, org.springframework.web.multipart.MultipartFile file) {
         Product product = productDao.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
