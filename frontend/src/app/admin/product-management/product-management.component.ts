@@ -19,6 +19,11 @@ export class ProductManagementComponent implements OnInit {
   productForm: FormGroup;
   submitting = false;
 
+  // Pagination
+  totalElements = 0;
+  pageSize = 5;
+  pageIndex = 0;
+
   selectedFile: File | null = null;
   imagePreview: SafeUrl | string | null = null;
 
@@ -43,9 +48,14 @@ export class ProductManagementComponent implements OnInit {
 
   loadProducts(): void {
     this.loading = true;
-    this.productService.getAllProducts().subscribe({
-      next: (products) => {
-        this.products = products;
+    // backend uses 1-based page index for some reason? 
+    // Wait, PageResponse usage in Service/Controller:
+    // Controller: @RequestParam(defaultValue = "1") int page
+    // So 1-based. Angular MatPaginator is 0-based.
+    this.productService.getProducts(this.pageIndex + 1, this.pageSize).subscribe({
+      next: (response) => {
+        this.products = response.content;
+        this.totalElements = response.totalElements;
         this.loading = false;
       },
       error: () => {
@@ -53,6 +63,12 @@ export class ProductManagementComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  onPageChange(event: any): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadProducts();
   }
 
   openAddForm(): void {

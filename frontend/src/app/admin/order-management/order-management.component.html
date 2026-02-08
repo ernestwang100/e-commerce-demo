@@ -99,19 +99,16 @@
     </ng-container>
   </div>
 
-  <!-- Pagination -->
-  <div *ngIf="!loading && orders.length > 0" class="pagination">
-    <button mat-button [disabled]="currentPage === 1" (click)="prevPage()">
-      <mat-icon>chevron_left</mat-icon> Previous
-    </button>
-    <span>Page {{ currentPage }}</span>
-    <button mat-button [disabled]="orders.length < 10" (click)="nextPage()">
-      Next <mat-icon>chevron_right</mat-icon>
-    </button>
-  </div>
 
   <div *ngIf="!loading && orders.length === 0" class="no-data">
-    <mat-icon>receipt_long</mat-icon>
-    <p>No orders found</p>
+    <mat-icon>inbox</mat-icon>
+    <p>No orders found.</p>
   </div>
+
+  <mat-paginator [length]="totalElements"
+               [pageSize]="pageSize"
+               [pageSizeOptions]="[5, 10, 25, 100]"
+               (page)="onPageChange($event)"
+               aria-label="Select page">
+  </mat-paginator>
 </div>

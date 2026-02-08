@@ -3,38 +3,38 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { OrderRequest, OrderResponse } from '../models/order.model';
+import { PageResponse } from '../models/page-response.model';
 
 @Injectable({
     providedIn: 'root'
 })
 export class OrderService {
-    private apiUrl = environment.apiUrl;
 
     constructor(private http: HttpClient) { }
 
     // User endpoints
-    placeOrder(request: OrderRequest): Observable<OrderResponse> {
-        return this.http.post<OrderResponse>(`${this.apiUrl}/orders`, request);
+    placeOrder(orderRequest: OrderRequest): Observable<OrderResponse> {
+        return this.http.post<OrderResponse>(`${environment.apiUrl}/orders`, orderRequest);
     }
 
     getUserOrders(): Observable<OrderResponse[]> {
-        return this.http.get<OrderResponse[]>(`${this.apiUrl}/orders/all`);
+        return this.http.get<OrderResponse[]>(`${environment.apiUrl}/orders/all`);
     }
 
     cancelOrder(orderId: number): Observable<string> {
-        return this.http.patch(`${this.apiUrl}/orders/${orderId}/cancel`, {}, { responseType: 'text' });
+        return this.http.patch(`${environment.apiUrl}/orders/${orderId}/cancel`, {}, { responseType: 'text' });
     }
 
     // Admin endpoints
-    getAdminOrders(page: number = 1): Observable<OrderResponse[]> {
-        return this.http.get<OrderResponse[]>(`${this.apiUrl}/orders/all?page=${page}`);
+    getAdminOrders(page: number, size: number): Observable<PageResponse<OrderResponse>> {
+        return this.http.get<PageResponse<OrderResponse>>(`${environment.apiUrl}/orders/all?page=${page}&size=${size}`);
     }
 
-    completeOrder(orderId: number): Observable<string> {
-        return this.http.patch(`${this.apiUrl}/orders/${orderId}/complete`, {}, { responseType: 'text' });
+    completeOrder(orderId: number): Observable<any> {
+        return this.http.patch(`${environment.apiUrl}/orders/${orderId}/complete`, {});
     }
 
     cancelOrderAdmin(orderId: number): Observable<string> {
-        return this.http.patch(`${this.apiUrl}/orders/${orderId}/cancel`, {}, { responseType: 'text' });
+        return this.http.patch(`${environment.apiUrl}/orders/${orderId}/cancel`, {}, { responseType: 'text' });
     }
 }

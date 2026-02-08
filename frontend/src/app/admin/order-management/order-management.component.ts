@@ -12,8 +12,12 @@ export class OrderManagementComponent implements OnInit {
   orders: OrderResponse[] = [];
   displayedColumns = ['orderId', 'datePlaced', 'items', 'total', 'status', 'actions'];
   loading = true;
-  currentPage = 1;
   expandedOrderId: number | null = null;
+
+  // Pagination
+  totalElements = 0;
+  pageSize = 5;
+  pageIndex = 0;
 
   constructor(
     private orderService: OrderService,
@@ -26,9 +30,10 @@ export class OrderManagementComponent implements OnInit {
 
   loadOrders(): void {
     this.loading = true;
-    this.orderService.getAdminOrders(this.currentPage).subscribe({
-      next: (orders) => {
-        this.orders = orders;
+    this.orderService.getAdminOrders(this.pageIndex + 1, this.pageSize).subscribe({
+      next: (response) => {
+        this.orders = response.content;
+        this.totalElements = response.totalElements;
         this.loading = false;
       },
       error: () => {
@@ -36,6 +41,12 @@ export class OrderManagementComponent implements OnInit {
         this.loading = false;
       }
     });
+  }
+
+  onPageChange(event: any): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.loadOrders();
   }
 
   toggleExpand(orderId: number): void {
@@ -80,17 +91,5 @@ export class OrderManagementComponent implements OnInit {
       case 'processing': return 'status-processing';
       default: return 'status-pending';
     }
-  }
-
-  prevPage(): void {
-    if (this.currentPage > 1) {
-      this.currentPage--;
-      this.loadOrders();
-    }
-  }
-
-  nextPage(): void {
-    this.currentPage++;
-    this.loadOrders();
   }
 }

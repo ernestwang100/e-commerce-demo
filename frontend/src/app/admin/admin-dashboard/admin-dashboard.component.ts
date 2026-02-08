@@ -42,9 +42,9 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   loadRecentOrders(): void {
-    this.orderService.getAdminOrders(1).subscribe({
-      next: (orders) => {
-        this.recentOrders = orders.slice(0, 5);
+    this.orderService.getAdminOrders(1, 5).subscribe({
+      next: (response) => {
+        this.recentOrders = response.content;
         this.loadingOrders = false;
       },
       error: () => {
