@@ -1,10 +1,12 @@
 package com.superdupermart.shopping.service.impl;
 
 import com.superdupermart.shopping.dao.ProductDao;
+import com.superdupermart.shopping.document.ProductDocument;
 import com.superdupermart.shopping.dto.PageResponse;
 import com.superdupermart.shopping.dto.ProductRequest;
 import com.superdupermart.shopping.dto.ProductResponse;
 import com.superdupermart.shopping.entity.Product;
+import com.superdupermart.shopping.repository.ProductSearchRepository;
 import com.superdupermart.shopping.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -19,10 +21,12 @@ import org.springframework.cache.annotation.Cacheable;
 public class ProductServiceImpl implements ProductService {
 
     private final ProductDao productDao;
+    private final ProductSearchRepository productSearchRepository;
 
     @Autowired
-    public ProductServiceImpl(ProductDao productDao) {
+    public ProductServiceImpl(ProductDao productDao, ProductSearchRepository productSearchRepository) {
         this.productDao = productDao;
+        this.productSearchRepository = productSearchRepository;
     }
 
     @Override
@@ -78,6 +82,10 @@ public class ProductServiceImpl implements ProductService {
                 .quantity(request.getQuantity())
                 .build();
         productDao.save(product);
+
+        // Sync to Elasticsearch
+        saveToElasticsearch(product);
+
         return mapToResponse(product, true);
     }
 
@@ -95,6 +103,10 @@ public class ProductServiceImpl implements ProductService {
         product.setQuantity(request.getQuantity());
 
         productDao.update(product);
+
+        // Sync to Elasticsearch
+        saveToElasticsearch(product);
+
         return mapToResponse(product, true);
     }
 
@@ -102,11 +114,17 @@ public class ProductServiceImpl implements ProductService {
     @Transactional(readOnly = true)
     @Cacheable(value = "product_search", key = "{#query, #minPrice, #maxPrice}")
     public List<ProductResponse> searchProducts(String query, Double minPrice, Double maxPrice) {
-        List<Product> products = productDao.searchProducts(query, minPrice, maxPrice);
-        boolean isAdmin = false; // Search is public, showing retail prices. Admin can see wholesale in detailed
-                                 // view if needed.
-        return products.stream()
-                .map(p -> mapToResponse(p, isAdmin))
+        // Use Elasticsearch for search
+        List<ProductDocument> docs;
+        if (minPrice != null && maxPrice != null) {
+            docs = productSearchRepository.findByNameAndPriceBetween(query,
+                    java.math.BigDecimal.valueOf(minPrice), java.math.BigDecimal.valueOf(maxPrice));
+        } else {
+            docs = productSearchRepository.findByNameOrDescription(query, query);
+        }
+
+        return docs.stream()
+                .map(this::mapDocumentToResponse)
                 .collect(Collectors.toList());
     }
 
@@ -120,6 +138,8 @@ public class ProductServiceImpl implements ProductService {
             product.setImage(file.getBytes());
             product.setImageContentType(file.getContentType());
             productDao.update(product);
+            // No need to sync image to ES as we don't index it content-wise,
+            // but we might want to update metadata if we did.
         } catch (java.io.IOException e) {
             throw new RuntimeException("Failed to upload product image", e);
         }
@@ -129,6 +149,18 @@ public class ProductServiceImpl implements ProductService {
     public Product getProductEntity(Integer id) {
         return productDao.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
+    // Helper to sync
+    private void saveToElasticsearch(Product product) {
+        ProductDocument doc = ProductDocument.builder()
+                .id(product.getId())
+                .name(product.getName())
+                .description(product.getDescription())
+                .price(product.getRetailPrice())
+                .imageContentType(product.getImageContentType())
+                .build();
+        productSearchRepository.save(doc);
     }
 
     private ProductResponse mapToResponse(Product product, boolean isAdmin) {
@@ -146,5 +178,17 @@ public class ProductServiceImpl implements ProductService {
         }
 
         return builder.build();
+    }
+
+    private ProductResponse mapDocumentToResponse(ProductDocument doc) {
+        return ProductResponse.builder()
+                .id(doc.getId())
+                .name(doc.getName())
+                .description(doc.getDescription())
+                .retailPrice(doc.getPrice())
+                // Image data is not in ES, so it will be null in search results list
+                // (which is fine for list view, faster). Detail view fetches from DB.
+                .imageContentType(doc.getImageContentType())
+                .build();
     }
 }
