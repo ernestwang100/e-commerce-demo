@@ -5,6 +5,8 @@ export interface Product {
     retailPrice: number;
     wholesalePrice?: number; // Admin only
     quantity?: number;       // Admin only
+    image?: string;          // Base64 string
+    imageContentType?: string;
 }
 
 export interface ProductRequest {

@@ -41,4 +41,12 @@ export class ProductService {
   deleteProduct(id: number): Observable<void> {
     return this.http.delete<void>(`${environment.apiUrl}/products/${id}`);
   }
+
+  uploadProductImage(id: number, formData: FormData): Observable<string> {
+    return this.http.post(`${environment.apiUrl}/products/${id}/image`, formData, { responseType: 'text' });
+  }
+
+  getProductImageBlob(id: number): Observable<Blob> {
+    return this.http.get(`${environment.apiUrl}/products/${id}/image`, { responseType: 'blob' });
+  }
 }

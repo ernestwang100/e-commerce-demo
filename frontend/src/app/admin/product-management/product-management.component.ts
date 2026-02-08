@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { Product, ProductRequest } from '../../models/product.model';
 import { ProductService } from '../../services/product.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-product-management',
@@ -11,17 +12,21 @@ import { ProductService } from '../../services/product.service';
 })
 export class ProductManagementComponent implements OnInit {
   products: Product[] = [];
-  displayedColumns = ['id', 'name', 'description', 'retailPrice', 'wholesalePrice', 'quantity', 'actions'];
+  displayedColumns = ['id', 'image', 'name', 'description', 'retailPrice', 'wholesalePrice', 'quantity', 'actions'];
   loading = true;
   showForm = false;
   editingProduct: Product | null = null;
   productForm: FormGroup;
   submitting = false;
 
+  selectedFile: File | null = null;
+  imagePreview: SafeUrl | string | null = null;
+
   constructor(
     private productService: ProductService,
     private fb: FormBuilder,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private sanitizer: DomSanitizer
   ) {
     this.productForm = this.fb.group({
       name: ['', [Validators.required, Validators.minLength(2)]],
@@ -53,6 +58,8 @@ export class ProductManagementComponent implements OnInit {
   openAddForm(): void {
     this.editingProduct = null;
     this.productForm.reset({ wholesalePrice: 0, retailPrice: 0, quantity: 0 });
+    this.selectedFile = null;
+    this.imagePreview = null;
     this.showForm = true;
   }
 
@@ -65,12 +72,40 @@ export class ProductManagementComponent implements OnInit {
       retailPrice: product.retailPrice,
       quantity: product.quantity || 0
     });
+
+    this.selectedFile = null;
+    this.imagePreview = null;
+    this.loadProductImage(product.id);
+
     this.showForm = true;
+  }
+
+  loadProductImage(id: number): void {
+    this.productService.getProductImageBlob(id).subscribe({
+      next: (blob) => {
+        const objectUrl = URL.createObjectURL(blob);
+        this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+      },
+      error: () => {
+        this.imagePreview = null;
+      }
+    });
+  }
+
+  onFileSelected(event: any): void {
+    const file = event.target.files[0];
+    if (file) {
+      this.selectedFile = file;
+      const objectUrl = URL.createObjectURL(file);
+      this.imagePreview = this.sanitizer.bypassSecurityTrustUrl(objectUrl);
+    }
   }
 
   closeForm(): void {
     this.showForm = false;
     this.editingProduct = null;
+    this.selectedFile = null;
+    this.imagePreview = null;
   }
 
   submitForm(): void {
@@ -84,21 +119,46 @@ export class ProductManagementComponent implements OnInit {
       : this.productService.createProduct(request);
 
     action.subscribe({
-      next: () => {
-        this.snackBar.open(
-          this.editingProduct ? 'Product updated' : 'Product created',
-          'Close',
-          { duration: 3000 }
-        );
-        this.closeForm();
-        this.loadProducts();
-        this.submitting = false;
+      next: (product) => {
+        if (this.selectedFile) {
+          this.uploadImage(product.id);
+        } else {
+          this.finishSubmit();
+        }
       },
       error: () => {
         this.snackBar.open('Operation failed', 'Close', { duration: 3000 });
         this.submitting = false;
       }
     });
+  }
+
+  uploadImage(productId: number): void {
+    if (!this.selectedFile) return;
+
+    const formData = new FormData();
+    formData.append('file', this.selectedFile);
+
+    this.productService.uploadProductImage(productId, formData).subscribe({
+      next: () => {
+        this.finishSubmit();
+      },
+      error: () => {
+        this.snackBar.open('Product saved but image upload failed', 'Close', { duration: 3000 });
+        this.finishSubmit();
+      }
+    });
+  }
+
+  finishSubmit(): void {
+    this.snackBar.open(
+      this.editingProduct ? 'Product updated' : 'Product created',
+      'Close',
+      { duration: 3000 }
+    );
+    this.closeForm();
+    this.loadProducts();
+    this.submitting = false;
   }
 
   deleteProduct(product: Product): void {
