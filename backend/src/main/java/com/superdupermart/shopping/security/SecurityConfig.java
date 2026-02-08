@@ -31,7 +31,7 @@ public class SecurityConfig {
     }
 
     // Hardcoded for debugging to ensure no env var parsing issues
-    @Value("${allowed.origins:http://localhost:14200,http://localhost:4200,https://shopping-frontend.greengrass-56c2de65.eastus.azurecontainerapps.io}")
+    @Value("${allowed.origins:http://localhost:14200,http://localhost:4200,http://127.0.0.1:4200,https://shopping-frontend.greengrass-56c2de65.eastus.azurecontainerapps.io}")
     private String allowedOrigins;
 
     @Bean
@@ -41,6 +41,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable()) // CSRF is already disabled globally, which includes chat endpoints.
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
                         .requestMatchers("/login", "/signup", "/version", "/chat/**", "/products/**").permitAll()
                         .requestMatchers("/admin/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/user/**").hasAuthority("ROLE_USER")

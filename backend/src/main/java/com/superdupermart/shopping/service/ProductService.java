@@ -9,9 +9,13 @@ public interface ProductService {
 
     ProductResponse getProductById(Integer id, boolean isAdmin);
 
-    void addProduct(ProductRequest request);
+    ProductResponse addProduct(ProductRequest request);
 
-    void updateProduct(Integer id, ProductRequest request);
+    ProductResponse updateProduct(Integer id, ProductRequest request);
 
     List<ProductResponse> searchProducts(String query, Double minPrice, Double maxPrice);
+
+    void uploadProductImage(Integer id, org.springframework.web.multipart.MultipartFile file);
+
+    com.superdupermart.shopping.entity.Product getProductEntity(Integer id);
 }

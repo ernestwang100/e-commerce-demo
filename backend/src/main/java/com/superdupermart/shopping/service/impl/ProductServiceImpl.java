@@ -48,7 +48,7 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     @CacheEvict(value = "products", allEntries = true)
-    public void addProduct(ProductRequest request) {
+    public ProductResponse addProduct(ProductRequest request) {
         Product product = Product.builder()
                 .name(request.getName())
                 .description(request.getDescription())
@@ -57,12 +57,13 @@ public class ProductServiceImpl implements ProductService {
                 .quantity(request.getQuantity())
                 .build();
         productDao.save(product);
+        return mapToResponse(product, true);
     }
 
     @Override
     @Transactional
     @CacheEvict(value = "products", allEntries = true)
-    public void updateProduct(Integer id, ProductRequest request) {
+    public ProductResponse updateProduct(Integer id, ProductRequest request) {
         Product product = productDao.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
 
@@ -73,6 +74,7 @@ public class ProductServiceImpl implements ProductService {
         product.setQuantity(request.getQuantity());
 
         productDao.update(product);
+        return mapToResponse(product, true);
     }
 
     @Override
@@ -86,12 +88,35 @@ public class ProductServiceImpl implements ProductService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    @Transactional
+    @CacheEvict(value = "products", allEntries = true)
+    public void uploadProductImage(Integer id, org.springframework.web.multipart.MultipartFile file) {
+        Product product = productDao.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+        try {
+            product.setImage(file.getBytes());
+            product.setImageContentType(file.getContentType());
+            productDao.update(product);
+        } catch (java.io.IOException e) {
+            throw new RuntimeException("Failed to upload product image", e);
+        }
+    }
+
+    @Override
+    public Product getProductEntity(Integer id) {
+        return productDao.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+    }
+
     private ProductResponse mapToResponse(Product product, boolean isAdmin) {
         ProductResponse.ProductResponseBuilder builder = ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
-                .retailPrice(product.getRetailPrice());
+                .retailPrice(product.getRetailPrice())
+                .image(product.getImage())
+                .imageContentType(product.getImageContentType());
 
         if (isAdmin) {
             builder.wholesalePrice(product.getWholesalePrice())

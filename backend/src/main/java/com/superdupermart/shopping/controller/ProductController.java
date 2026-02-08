@@ -47,16 +47,39 @@ public class ProductController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> addProduct(@RequestBody ProductRequest request) {
-        productService.addProduct(request);
-        return ResponseEntity.ok("Product added successfully");
+    public ResponseEntity<ProductResponse> addProduct(@RequestBody ProductRequest request) {
+        return ResponseEntity.ok(productService.addProduct(request));
     }
 
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<String> updateProduct(@PathVariable Integer id, @RequestBody ProductRequest request) {
-        productService.updateProduct(id, request);
-        return ResponseEntity.ok("Product updated successfully");
+    public ResponseEntity<ProductResponse> updateProduct(@PathVariable Integer id,
+            @RequestBody ProductRequest request) {
+        try {
+            return ResponseEntity.ok(productService.updateProduct(id, request));
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw e;
+        }
+    }
+
+    @PostMapping("/{id}/image")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<String> uploadProductImage(@PathVariable Integer id,
+            @RequestParam("file") org.springframework.web.multipart.MultipartFile file) {
+        productService.uploadProductImage(id, file);
+        return ResponseEntity.ok("Product image uploaded successfully");
+    }
+
+    @GetMapping("/{id}/image")
+    public ResponseEntity<byte[]> getProductImage(@PathVariable Integer id) {
+        com.superdupermart.shopping.entity.Product product = productService.getProductEntity(id);
+        if (product.getImage() == null || product.getImage().length == 0) {
+            return ResponseEntity.notFound().build();
+        }
+        return ResponseEntity.ok()
+                .contentType(org.springframework.http.MediaType.parseMediaType(product.getImageContentType()))
+                .body(product.getImage());
     }
 
     @GetMapping("/frequent/{limit}")
