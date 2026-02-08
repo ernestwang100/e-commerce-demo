@@ -38,11 +38,13 @@ public class ProductController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<ProductResponse>> searchProducts(
+    public ResponseEntity<com.superdupermart.shopping.dto.PageResponse<ProductResponse>> searchProducts(
             @RequestParam(required = false) String query,
             @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice) {
-        return ResponseEntity.ok(productService.searchProducts(query, minPrice, maxPrice));
+            @RequestParam(required = false) Double maxPrice,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "12") int size) {
+        return ResponseEntity.ok(productService.searchProducts(query, minPrice, maxPrice, page, size));
     }
 
     @GetMapping

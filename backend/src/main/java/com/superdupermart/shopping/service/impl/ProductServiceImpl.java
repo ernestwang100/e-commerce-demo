@@ -16,6 +16,8 @@ import java.util.stream.Collectors;
 
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 @Service
 public class ProductServiceImpl implements ProductService {
@@ -112,26 +114,32 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional(readOnly = true)
-    @Cacheable(value = "product_search", key = "{#query, #minPrice, #maxPrice}")
-    public List<ProductResponse> searchProducts(String query, Double minPrice, Double maxPrice) {
-        // Use Elasticsearch for search
-        List<ProductDocument> docs;
+    @Cacheable(value = "product_search", key = "{#query, #minPrice, #maxPrice, #page, #size}")
+    public PageResponse<ProductResponse> searchProducts(String query, Double minPrice, Double maxPrice, int page,
+            int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        org.springframework.data.domain.Page<ProductDocument> docsPage;
+
         if (minPrice != null && maxPrice != null) {
-            docs = productSearchRepository.findByNameAndPriceBetween(query,
-                    java.math.BigDecimal.valueOf(minPrice), java.math.BigDecimal.valueOf(maxPrice));
+            docsPage = productSearchRepository.findByNameAndPriceBetween(query,
+                    java.math.BigDecimal.valueOf(minPrice), java.math.BigDecimal.valueOf(maxPrice), pageable);
+        } else if (query != null && !query.trim().isEmpty()) {
+            docsPage = productSearchRepository.findByNameOrDescription(query, query, pageable);
         } else {
-            docs = productSearchRepository.findByNameOrDescription(query, query);
+            docsPage = productSearchRepository.findAll(pageable);
         }
 
-        return docs.stream()
+        List<ProductResponse> content = docsPage.getContent().stream()
                 .map(this::mapDocumentToResponse)
-                .peek(response -> {
-                    // Hydrate image data from DB since it's not in Elasticsearch
-                    productDao.findById(response.getId()).ifPresent(product -> {
-                        response.setImage(product.getImage());
-                    });
-                })
                 .collect(Collectors.toList());
+
+        return PageResponse.<ProductResponse>builder()
+                .content(content)
+                .totalElements(docsPage.getTotalElements())
+                .totalPages(docsPage.getTotalPages())
+                .size(size)
+                .number(page)
+                .build();
     }
 
     @Override
@@ -159,6 +167,7 @@ public class ProductServiceImpl implements ProductService {
 
     @Override
     @Transactional
+    @CacheEvict(value = { "products", "product", "product_search" }, allEntries = true)
     public void syncAllProducts() {
         List<Product> products = productDao.getAllProducts();
         List<ProductDocument> docs = products.stream()

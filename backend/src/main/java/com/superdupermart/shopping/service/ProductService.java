@@ -15,7 +15,8 @@ public interface ProductService {
 
     ProductResponse updateProduct(Integer id, ProductRequest request);
 
-    List<ProductResponse> searchProducts(String query, Double minPrice, Double maxPrice);
+    com.superdupermart.shopping.dto.PageResponse<ProductResponse> searchProducts(String query, Double minPrice,
+            Double maxPrice, int page, int size);
 
     void uploadProductImage(Integer id, org.springframework.web.multipart.MultipartFile file);
 
