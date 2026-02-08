@@ -4,6 +4,7 @@ import { ProductService } from '../../services/product.service';
 import { CartService } from '../../services/cart.service';
 import { Product } from '../../models/product.model';
 import { first } from 'rxjs/operators';
+import { PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-dashboard',
@@ -20,6 +21,11 @@ export class DashboardComponent implements OnInit {
   minPrice: number | null = null;
   maxPrice: number | null = null;
 
+  // Pagination state
+  pageIndex = 0;
+  pageSize = 12;
+  totalElements = 0;
+
   constructor(
     private productService: ProductService,
     private cartService: CartService,
@@ -34,29 +40,35 @@ export class DashboardComponent implements OnInit {
     this.loading = true;
     this.error = '';
 
-    // Convert empty strings to undefined/null for the service
     const min = this.minPrice ? this.minPrice : undefined;
     const max = this.maxPrice ? this.maxPrice : undefined;
 
-    this.productService.searchProducts(this.searchQuery, min, max)
+    this.productService.searchProducts(this.searchQuery, min, max, this.pageIndex, this.pageSize)
       .pipe(first())
       .subscribe({
-        next: products => {
-          this.products = products;
+        next: response => {
+          this.products = response.content;
+          this.totalElements = response.totalElements;
           this.loading = false;
         },
         error: error => {
-          this.error = 'Failed to load products. Please try again.';
+          this.error = 'Failed to load products';
           this.loading = false;
-          console.error('Error loading products:', error);
         }
       });
+  }
+
+  onPageChange(event: PageEvent): void {
+    this.pageIndex = event.pageIndex;
+    this.pageSize = event.pageSize;
+    this.searchProducts();
   }
 
   clearSearch(): void {
     this.searchQuery = '';
     this.minPrice = null;
     this.maxPrice = null;
+    this.pageIndex = 0;
     this.searchProducts();
   }
 

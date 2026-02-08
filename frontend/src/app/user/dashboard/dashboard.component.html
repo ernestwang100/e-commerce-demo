@@ -70,6 +70,15 @@
       </mat-card-actions>
     </mat-card>
   </div>
+  
+  <!-- Paginator -->
+  <mat-paginator [length]="totalElements"
+                 [pageSize]="pageSize"
+                 [pageIndex]="pageIndex"
+                 [pageSizeOptions]="[12, 24, 48, 96]"
+                 (page)="onPageChange($event)"
+                 *ngIf="!loading && !error && products.length > 0">
+  </mat-paginator>
 
   <div *ngIf="!loading && products.length === 0" class="state-container empty">
     <div class="empty-icon">

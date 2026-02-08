@@ -27,13 +27,15 @@ export class ProductService {
     return this.http.get<Product>(`${environment.apiUrl}/products/${id}`);
   }
 
-  searchProducts(query: string, minPrice?: number, maxPrice?: number): Observable<Product[]> {
+  searchProducts(query: string, minPrice?: number, maxPrice?: number, page: number = 0, size: number = 12): Observable<PageResponse<Product>> {
     let params: any = {};
     if (query) params.query = query;
     if (minPrice) params.minPrice = minPrice;
     if (maxPrice) params.maxPrice = maxPrice;
+    params.page = page;
+    params.size = size;
 
-    return this.http.get<Product[]>(`${environment.apiUrl}/products/search`, { params });
+    return this.http.get<PageResponse<Product>>(`${environment.apiUrl}/products/search`, { params });
   }
 
   // Admin methods

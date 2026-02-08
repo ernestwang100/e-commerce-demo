@@ -14,6 +14,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatPaginatorModule } from '@angular/material/paginator';
 import { FormsModule } from '@angular/forms';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { CartComponent } from './cart/cart.component';
@@ -44,7 +45,8 @@ import { PaymentComponent } from './payment/payment.component';
     MatChipsModule,
     MatProgressSpinnerModule,
     MatInputModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatPaginatorModule
   ]
 })
 export class UserModule { }
