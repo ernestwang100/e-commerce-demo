@@ -44,6 +44,11 @@ A full-stack e-commerce application featuring a Spring Boot backend, Angular fro
 git clone <your-repo-url>
 cd e-commerce-demo
 
+# Build the Backend (Required)
+cd backend
+mvn clean package -DskipTests
+cd ..
+
 # Start all services (MySQL, Redis, Kafka, Backend, Frontend)
 docker-compose up -d --build
 
@@ -108,10 +113,20 @@ ng serve
 |--------|----------|-------------|------|
 | POST | `/login` | User login | Public |
 | POST | `/signup` | User registration | Public |
-| GET | `/products/all` | List products | Public |
+| GET | `/products` | List products (paginated) | Public |
+| GET | `/products/all` | List all products (no pagination) | Public |
 | GET | `/products/{id}` | Product detail | Public |
+| GET | `/products/search` | Search products | Public |
+| POST | `/products` | Add product | Admin |
+| PATCH | `/products/{id}` | Update product | Admin |
+| POST | `/products/{id}/image` | Upload product image | Admin |
+| GET | `/products/{id}/image` | Get product image | Public |
+| GET | `/profile` | Get user profile | User |
+| PUT | `/profile` | Update user profile | User |
+| POST | `/profile/picture` | Upload profile picture | User |
+| GET | `/profile/picture` | Get profile picture | User |
 | POST | `/orders` | Place order | User/Admin |
-| GET | `/orders/all` | List orders | User/Admin |
+| GET | `/orders/all` | List orders (paginated) | User/Admin |
 | PATCH | `/orders/{id}/cancel` | Cancel order | User/Admin |
 | POST | `/chat` | AI Chatbot | User |
 
