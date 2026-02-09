@@ -1,17 +1,14 @@
 # Multi-stage build for Spring Boot
-FROM eclipse-temurin:17-jdk AS build
+FROM maven:3.9-eclipse-temurin-17 AS build
 WORKDIR /app
 
-# Copy Maven wrapper and pom.xml
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
-
-# Download dependencies (cached layer)
-RUN chmod +x mvnw && ./mvnw dependency:go-offline -B
+# Copy pom.xml and download dependencies (cached layer)
+COPY pom.xml ./
+RUN mvn dependency:go-offline -B
 
 # Copy source and build
 COPY src/ src/
-RUN ./mvnw package -DskipTests -B
+RUN mvn package -DskipTests -B
 
 # Runtime stage
 FROM eclipse-temurin:17-jre
