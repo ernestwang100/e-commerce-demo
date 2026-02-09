@@ -30,8 +30,7 @@ public class SecurityConfig {
         this.jwtFilter = jwtFilter;
     }
 
-    // Hardcoded for debugging to ensure no env var parsing issues
-    @Value("${allowed.origins:http://localhost:14200,http://localhost:4200,http://127.0.0.1:4200,https://shopping-frontend.greengrass-56c2de65.eastus.azurecontainerapps.io}")
+    @Value("${allowed.origins:http://localhost:4200}")
     private String allowedOrigins;
 
     @Bean
