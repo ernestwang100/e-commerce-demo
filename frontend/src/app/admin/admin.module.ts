@@ -20,11 +20,14 @@ import { AdminDashboardComponent } from './admin-dashboard/admin-dashboard.compo
 import { ProductManagementComponent } from './product-management/product-management.component';
 import { OrderManagementComponent } from './order-management/order-management.component';
 
+import { AdminDebugComponent } from './admin-debug/admin-debug.component';
+
 @NgModule({
   declarations: [
     AdminDashboardComponent,
     ProductManagementComponent,
-    OrderManagementComponent
+    OrderManagementComponent,
+    AdminDebugComponent
   ],
   imports: [
     CommonModule,

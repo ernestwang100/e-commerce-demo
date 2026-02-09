@@ -1,0 +1,58 @@
+<div class="debug-container">
+  <h2>System Diagnostics</h2>
+
+  <div class="status-widgets">
+    <div class="widget" [class.up]="health.database === 'UP'" [class.down]="health.database !== 'UP'">
+      <mat-icon>{{ health.database === 'UP' ? 'check_circle' : 'error' }}</mat-icon>
+      <div class="info">
+        <h3>Database</h3>
+        <span>{{ health.database || 'Checking...' }}</span>
+      </div>
+    </div>
+
+    <div class="widget" [class.up]="health.redis && health.redis.startsWith('UP')" [class.down]="!health.redis || !health.redis.startsWith('UP')">
+      <mat-icon>{{ health.redis && health.redis.startsWith('UP') ? 'check_circle' : 'error' }}</mat-icon>
+      <div class="info">
+        <h3>Redis Cache</h3>
+        <span>{{ health.redis || 'Checking...' }}</span>
+      </div>
+    </div>
+
+    <div class="widget" [class.up]="health.elasticsearch === 'UP'" [class.down]="health.elasticsearch !== 'UP'">
+      <mat-icon>{{ health.elasticsearch === 'UP' ? 'check_circle' : 'error' }}</mat-icon>
+      <div class="info">
+        <h3>Elasticsearch</h3>
+        <span>{{ health.elasticsearch || 'Checking...' }}</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="actions">
+    <button mat-raised-button color="primary" (click)="refreshHealth()" [disabled]="loading">
+      <mat-icon>refresh</mat-icon> Refresh Status
+    </button>
+    
+    <button mat-raised-button color="accent" (click)="syncProducts()" [disabled]="syncing">
+      <mat-icon [class.spin]="syncing">sync</mat-icon> 
+      {{ syncing ? 'Syncing...' : 'Force Sync Products' }}
+    </button>
+
+    <button mat-raised-button color="warn" (click)="flushCache()" [disabled]="flushing">
+      <mat-icon>delete_sweep</mat-icon> 
+      {{ flushing ? 'Flushing...' : 'Flush Redis Cache' }}
+    </button>
+  </div>
+
+  <div class="logs-viewer">
+    <div class="logs-header">
+      <h3>System Logs (Tail 100)</h3>
+      <button mat-icon-button (click)="fetchLogs()">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+    <div class="terminal">
+      <div *ngFor="let log of logs" class="log-line">{{ log }}</div>
+      <div *ngIf="logs.length === 0" class="log-line">No logs available or failed to fetch.</div>
+    </div>
+  </div>
+</div>

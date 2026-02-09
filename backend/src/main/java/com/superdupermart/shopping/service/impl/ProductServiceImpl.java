@@ -172,23 +172,6 @@ public class ProductServiceImpl implements ProductService {
     @Override
     @Transactional
     @CacheEvict(value = { "products", "product", "product_search" }, allEntries = true)
-    public void syncAllProducts() {
-        List<Product> products = productDao.getAllProducts();
-        List<ProductDocument> docs = products.stream()
-                .map(product -> ProductDocument.builder()
-                        .id(product.getId())
-                        .name(product.getName())
-                        .description(product.getDescription())
-                        .price(product.getRetailPrice())
-                        .imageContentType(product.getImageContentType())
-                        .build())
-                .collect(Collectors.toList());
-        productSearchRepository.saveAll(docs);
-    }
-
-    @Override
-    @Transactional
-    @CacheEvict(value = { "products", "product", "product_search" }, allEntries = true)
     public void deleteProduct(Integer id) {
         Product product = productDao.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found"));
@@ -237,5 +220,17 @@ public class ProductServiceImpl implements ProductService {
                 // (which is fine for list view, faster). Detail view fetches from DB.
                 .imageContentType(doc.getImageContentType())
                 .build();
+    }
+
+    @Override
+    @Transactional
+    public void syncAllProducts() {
+        List<Product> products = productDao.getAllProducts();
+        int count = 0;
+        for (Product product : products) {
+            saveToElasticsearch(product);
+            count++;
+        }
+        System.out.println("DEBUG: Manually synced " + count + " products to Elasticsearch.");
     }
 }
