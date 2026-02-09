@@ -29,8 +29,8 @@ jobs:
             cd ${{ env.PROJECT_DIR }}
 
             echo ">>> Pulling latest changes..."
-            git fetch origin main
-            git reset --hard origin/main
+            git fetch origin master
+            git reset --hard origin/master
 
             echo ">>> Stopping existing containers..."
             docker compose -f docker-compose.yml -f docker-compose.prod.yml down || true
