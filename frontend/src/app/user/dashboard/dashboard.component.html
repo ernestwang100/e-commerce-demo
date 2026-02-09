@@ -41,7 +41,8 @@
     <mat-card class="product-card" *ngFor="let product of products">
       <div class="card-image-wrapper">
         <img *ngIf="product.image" [src]="'data:' + product.imageContentType + ';base64,' + product.image" alt="{{ product.name }}" class="product-img">
-        <div class="product-image" *ngIf="!product.image">
+        <img *ngIf="!product.image && product.imageContentType" [src]="apiUrl + '/products/' + product.id + '/image'" alt="{{ product.name }}" class="product-img">
+        <div class="product-image" *ngIf="!product.image && !product.imageContentType">
           <mat-icon>inventory_2</mat-icon>
         </div>
         <div class="badge" *ngIf="product.quantity !== undefined && product.quantity < 10 && product.quantity > 0">Limited Stock</div>

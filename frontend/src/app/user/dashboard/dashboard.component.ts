@@ -5,6 +5,7 @@ import { CartService } from '../../services/cart.service';
 import { Product } from '../../models/product.model';
 import { first } from 'rxjs/operators';
 import { PageEvent } from '@angular/material/paginator';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-dashboard',
@@ -12,6 +13,7 @@ import { PageEvent } from '@angular/material/paginator';
   styleUrls: ['./dashboard.component.css']
 })
 export class DashboardComponent implements OnInit {
+  apiUrl = environment.apiUrl;
   products: Product[] = [];
   loading = false;
   error = '';
