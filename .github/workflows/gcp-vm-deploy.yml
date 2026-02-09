@@ -41,4 +41,11 @@ jobs:
             echo ">>> Pruning old images..."
             docker image prune -f
 
+            echo ">>> Waiting for backend to start..."
+            sleep 60
+
+            echo ">>> Running Elasticsearch Sync..."
+            # Running on host, targeting mapped ports 7070 and 19200
+            python3 sync_es.py || echo "Sync failed, but deployment continues."
+
             echo ">>> Deployment complete!"
