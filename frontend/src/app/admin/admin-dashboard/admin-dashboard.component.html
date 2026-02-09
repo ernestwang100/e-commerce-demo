@@ -36,7 +36,7 @@
           <li *ngFor="let item of stats.mostPopular; let i = index">
             <span class="rank">#{{ i + 1 }}</span>
             <span class="name">{{ item.name }}</span>
-            <span class="value">{{ item.value }} sold</span>
+            <span class="value">{{ item.value }} ordered</span>
           </li>
           <li *ngIf="stats.mostPopular.length === 0" class="no-data">No data available</li>
         </ul>
