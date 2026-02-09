@@ -41,6 +41,7 @@ export class AuthService {
 
   logout() {
     localStorage.removeItem('user');
+    localStorage.removeItem('chatSessionId');
     this.userSubject.next(null);
   }
 

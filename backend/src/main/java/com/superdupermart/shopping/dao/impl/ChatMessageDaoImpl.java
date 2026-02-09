@@ -26,23 +26,30 @@ public class ChatMessageDaoImpl implements ChatMessageDao {
     @Override
     public List<ChatMessage> findBySessionId(String sessionId) {
         return entityManager.createQuery(
-            "SELECT m FROM ChatMessage m WHERE m.sessionId = :sessionId ORDER BY m.createdAt ASC",
-            ChatMessage.class
-        ).setParameter("sessionId", sessionId).getResultList();
+                "SELECT m FROM ChatMessage m WHERE m.sessionId = :sessionId ORDER BY m.createdAt ASC",
+                ChatMessage.class).setParameter("sessionId", sessionId).getResultList();
+    }
+
+    @Override
+    public List<ChatMessage> findBySessionIdAndUserId(String sessionId, Integer userId) {
+        return entityManager.createQuery(
+                "SELECT m FROM ChatMessage m WHERE m.sessionId = :sessionId AND m.userId = :userId ORDER BY m.createdAt ASC",
+                ChatMessage.class).setParameter("sessionId", sessionId)
+                .setParameter("userId", userId)
+                .getResultList();
     }
 
     @Override
     public List<ChatMessage> findByUserId(Integer userId) {
         return entityManager.createQuery(
-            "SELECT m FROM ChatMessage m WHERE m.userId = :userId ORDER BY m.createdAt DESC",
-            ChatMessage.class
-        ).setParameter("userId", userId).getResultList();
+                "SELECT m FROM ChatMessage m WHERE m.userId = :userId ORDER BY m.createdAt DESC",
+                ChatMessage.class).setParameter("userId", userId).getResultList();
     }
 
     @Override
     public void deleteBySessionId(String sessionId) {
         entityManager.createQuery(
-            "DELETE FROM ChatMessage m WHERE m.sessionId = :sessionId"
-        ).setParameter("sessionId", sessionId).executeUpdate();
+                "DELETE FROM ChatMessage m WHERE m.sessionId = :sessionId").setParameter("sessionId", sessionId)
+                .executeUpdate();
     }
 }

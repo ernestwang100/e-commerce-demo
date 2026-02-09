@@ -29,7 +29,7 @@ public class ChatController {
         // Allow anonymous chat? Probably not if we track history by user.
         // If userId is null, maybe handle as guest or error.
         if (userId == null) {
-             return ResponseEntity.badRequest().build(); 
+            return ResponseEntity.badRequest().build();
         }
         ChatResponse response = chatService.processMessage(request, userId);
         return ResponseEntity.ok(response);
@@ -37,8 +37,12 @@ public class ChatController {
 
     @GetMapping("/history/{sessionId}")
     public ResponseEntity<List<ChatResponse>> getHistory(@PathVariable String sessionId) {
-        // Validation could be added here to ensure users only see their own history
-        return ResponseEntity.ok(chatService.getConversationHistory(sessionId));
+        Integer userId = SecurityUtils.getCurrentUserId();
+        // Return empty list if user is not authenticated, or maybe 401
+        if (userId == null) {
+            return ResponseEntity.status(401).build();
+        }
+        return ResponseEntity.ok(chatService.getConversationHistory(sessionId, userId));
     }
 
     @DeleteMapping("/history/{sessionId}")

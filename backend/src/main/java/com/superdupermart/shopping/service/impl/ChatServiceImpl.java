@@ -47,7 +47,7 @@ public class ChatServiceImpl implements ChatService {
         chatMessageDao.save(userMessage);
 
         // Get conversation history (excluding the message we just saved)
-        List<ChatMessage> history = chatMessageDao.findBySessionId(sessionId);
+        List<ChatMessage> history = chatMessageDao.findBySessionIdAndUserId(sessionId, userId);
         // Remove the last message (the one we just saved) from history for AI context
         if (!history.isEmpty()) {
             history = history.subList(0, history.size() - 1);
@@ -76,8 +76,8 @@ public class ChatServiceImpl implements ChatService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<ChatResponse> getConversationHistory(String sessionId) {
-        return chatMessageDao.findBySessionId(sessionId).stream()
+    public List<ChatResponse> getConversationHistory(String sessionId, Integer userId) {
+        return chatMessageDao.findBySessionIdAndUserId(sessionId, userId).stream()
                 .map(msg -> ChatResponse.builder()
                         .sessionId(msg.getSessionId())
                         .message(msg.getContent())

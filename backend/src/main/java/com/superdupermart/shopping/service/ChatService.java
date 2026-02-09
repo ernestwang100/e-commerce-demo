@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface ChatService {
     ChatResponse processMessage(ChatRequest request, Integer userId);
-    List<ChatResponse> getConversationHistory(String sessionId);
+
+    List<ChatResponse> getConversationHistory(String sessionId, Integer userId);
+
     void clearConversation(String sessionId);
 }
