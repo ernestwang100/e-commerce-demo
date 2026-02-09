@@ -20,7 +20,8 @@ def sync():
             "name": p["name"],
             "description": p["description"],
             "price": p["retailPrice"],
-            "imageContentType": p.get("imageContentType")
+            "imageContentType": p.get("imageContentType"),
+            "_class": "com.superdupermart.shopping.document.ProductDocument"
         }
         print(f"Indexing product {p['id']}: {p['name']}...")
         try:
