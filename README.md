@@ -35,6 +35,39 @@ A full-stack e-commerce application featuring a Spring Boot backend, Angular fro
 - **Kafka Events**: Order placement triggers async notifications.
 - **JWT Authentication**: Secure, stateless authentication.
 
+## Monitoring & Operations
+
+### 1. Admin Debug Dashboard
+- Access: `http://<VM-IP>:4200/admin/debug` (Login required)
+- Features: View logs, check health, force sync products, flush cache.
+
+### 2. Swagger API Documentation
+- Access: `http://<VM-IP>:7070/swagger-ui.html`
+- Features: Interactive API testing.
+
+### 3. Load Testing (k6)
+To run load tests on the VM:
+```bash
+# 1. SSH into the VM
+gcloud compute ssh shopping-vm
+
+# 2. Run the load test script (Default 10 VUs)
+./k6-v0.47.0-linux-amd64/k6 run load_test.js
+
+# Option: Set custom VUs (e.g., 50)
+./k6-v0.47.0-linux-amd64/k6 run -e VUS=50 load_test.js
+```
+
+### 4. Kafka Message Inspection
+To view real-time events (e.g., product views):
+```bash
+# 1. SSH into the VM (if not already)
+gcloud compute ssh shopping-vm
+
+# 2. Tap into the Kafka container
+sudo docker exec -it shopping-kafka kafka-console-consumer --bootstrap-server localhost:29092 --topic product-views --from-beginning
+```
+
 ## 🐳 Quick Start (Docker)
 
 **Prerequisites**: Docker and Docker Compose installed.
