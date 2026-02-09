@@ -155,8 +155,9 @@ public class ProductServiceImpl implements ProductService {
             product.setImage(file.getBytes());
             product.setImageContentType(file.getContentType());
             productDao.update(product);
-            // No need to sync image to ES as we don't index it content-wise,
-            // but we might want to update metadata if we did.
+
+            // Sync image metadata to Elasticsearch
+            saveToElasticsearch(product);
         } catch (java.io.IOException e) {
             throw new RuntimeException("Failed to upload product image", e);
         }
@@ -197,6 +198,8 @@ public class ProductServiceImpl implements ProductService {
 
     // Helper to sync
     private void saveToElasticsearch(Product product) {
+        System.out
+                .println("DEBUG: Syncing product " + product.getId() + " (" + product.getName() + ") to Elasticsearch");
         ProductDocument doc = ProductDocument.builder()
                 .id(product.getId())
                 .name(product.getName())
