@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  mysql:
+    restart: always
+    environment:
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+
+  redis:
+    restart: always
+
+  zookeeper:
+    restart: always
+
+  kafka:
+    restart: always
+
+  elasticsearch:
+    restart: always
+    environment:
+      - "ES_JAVA_OPTS=-Xms1g -Xmx1g" # Increased heap for production
+
+  backend:
+    restart: always
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+
+  frontend:
+    restart: always

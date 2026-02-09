@@ -1,0 +1,44 @@
+name: Deploy to GCP VM
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch: # Allow manual trigger
+
+env:
+  PROJECT_DIR: /home/${{ secrets.SSH_USER }}/e-commerce-demo
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Deploy to GCP VM via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.VM_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
+          script: |
+            set -e
+            echo ">>> Navigating to project directory..."
+            cd ${{ env.PROJECT_DIR }} || git clone https://github.com/${{ github.repository }}.git ${{ env.PROJECT_DIR }}
+            cd ${{ env.PROJECT_DIR }}
+
+            echo ">>> Pulling latest changes..."
+            git fetch origin main
+            git reset --hard origin/main
+
+            echo ">>> Stopping existing containers..."
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml down || true
+
+            echo ">>> Building and starting containers..."
+            docker compose -f docker-compose.yml -f docker-compose.prod.yml up -d --build
+
+            echo ">>> Pruning old images..."
+            docker image prune -f
+
+            echo ">>> Deployment complete!"
