@@ -133,6 +133,9 @@ public class ProductServiceImpl implements ProductService {
                 .map(this::mapDocumentToResponse)
                 .collect(Collectors.toList());
 
+        System.out.println("DEBUG: Search query '" + query + "' returned " + content.size() + " products out of "
+                + docsPage.getTotalElements() + " total items.");
+
         return PageResponse.<ProductResponse>builder()
                 .content(content)
                 .totalElements(docsPage.getTotalElements())
