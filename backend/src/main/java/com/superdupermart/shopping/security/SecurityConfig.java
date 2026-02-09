@@ -41,7 +41,9 @@ public class SecurityConfig {
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(org.springframework.http.HttpMethod.OPTIONS, "/**").permitAll()
-                        .requestMatchers("/login", "/signup", "/version", "/chat/**", "/products/**").permitAll()
+                        .requestMatchers("/login", "/signup", "/version", "/chat/**", "/products/**", "/v3/api-docs/**",
+                                "/swagger-ui/**", "/swagger-ui.html")
+                        .permitAll()
                         .requestMatchers("/admin/**", "/stats/admin", "/api/system/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/user/**", "/stats/user").hasAuthority("ROLE_USER")
                         .anyRequest().authenticated())
