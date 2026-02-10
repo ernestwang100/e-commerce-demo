@@ -11,7 +11,13 @@ export default function () {
 
     // 1. Login to get JWT
     const loginPayload = JSON.stringify({ username: 'admin', password: '123' });
-    const params = { headers: { 'Content-Type': 'application/json' } };
+    const params = {
+        headers: {
+            'Content-Type': 'application/json',
+            'User-Agent': 'k6-load-test',
+            'Origin': 'http://localhost:4200'
+        }
+    };
     const loginRes = http.post(`${BASE_URL}/api/auth/login`, loginPayload, params);
 
     const token = loginRes.json('token');

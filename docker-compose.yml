@@ -99,6 +99,7 @@ services:
       # Performance Tuning for Load Test
       - SPRING_DATASOURCE_HIKARI_MAXIMUM_POOL_SIZE=50
       - SERVER_TOMCAT_THREADS_MAX=500
+      - allowed.origins=*
     ports:
       - "7070:7070"
     networks:
