@@ -47,6 +47,52 @@ graph TD
     style Gemini fill:#4285f4,stroke:#333,color:#fff
 ```
 
+## 📊 Entity Relationship Diagram (ERD)
+```mermaid
+erDiagram
+    USER ||--o{ ORDER : places
+    USER ||--o{ WATCHLIST : tracks
+    ORDER ||--o{ ORDER_ITEM : contains
+    PRODUCT ||--o{ ORDER_ITEM : "included in"
+    PRODUCT ||--o{ WATCHLIST : "added to"
+
+    USER {
+        int id PK
+        string username
+        string email
+        string role
+        boolean is_admin
+    }
+
+    PRODUCT {
+        int id PK
+        string name
+        decimal retail_price
+        int quantity
+    }
+
+    ORDER {
+        int id PK
+        int user_id FK
+        datetime date_placed
+        string order_status
+    }
+
+    ORDER_ITEM {
+        int id PK
+        int order_id FK
+        int product_id FK
+        int quantity
+        decimal purchased_price
+    }
+
+    WATCHLIST {
+        int id PK
+        int user_id FK
+        int product_id FK
+    }
+```
+
 ---
 
 ## 2. Technical Deep-Dives (Focus Areas)
