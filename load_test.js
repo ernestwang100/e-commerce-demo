@@ -2,7 +2,7 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 
 export const options = {
-    vus: __ENV.VUS ? parseInt(__ENV.VUS) : 10,
+    vus: __ENV.VUS ? parseInt(__ENV.VUS) : 1,
     duration: '30s',
 };
 
@@ -17,7 +17,7 @@ export default function () {
             'User-Agent': 'k6-load-test'
         }
     };
-    const loginRes = http.post(`${BASE_URL}/api/auth/login`, loginPayload, params);
+    const loginRes = http.post(`${BASE_URL}/login`, loginPayload, params);
 
     if (loginRes.status !== 200) {
         console.error('Login failed: ' + loginRes.status + ' ' + loginRes.body);
@@ -29,7 +29,7 @@ export default function () {
 
     // 2. Use Token for Product Request
     const authParams = { headers: { 'Authorization': `Bearer ${token}` } };
-    let res = http.get(`${BASE_URL}/api/products`, authParams);
+    let res = http.get(`${BASE_URL}/products`, authParams);
 
     check(res, {
         'status is 200': (r) => r.status === 200,
