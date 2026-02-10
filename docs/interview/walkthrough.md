@@ -47,70 +47,71 @@ graph TD
     style Gemini fill:#4285f4,stroke:#333,color:#fff
 ```
 
-## 📊 Entity Relationship Diagram (ERD)
-```mermaid
-erDiagram
-    USER ||--o{ ORDER : places
-    USER ||--o{ WATCHLIST : tracks
-    ORDER ||--o{ ORDER_ITEM : contains
-    PRODUCT ||--o{ ORDER_ITEM : "included in"
-    PRODUCT ||--o{ WATCHLIST : "added to"
-
-    USER {
-        int id PK
-        string username
-        string email
-        string role
-        boolean is_admin
-    }
-
-    PRODUCT {
-        int id PK
-        string name
-        decimal retail_price
-        int quantity
-    }
-
-    ORDER {
-        int id PK
-        int user_id FK
-        datetime date_placed
-        string order_status
-    }
-
-    ORDER_ITEM {
-        int id PK
-        int order_id FK
-        int product_id FK
-        int quantity
-        decimal purchased_price
-    }
-
-    WATCHLIST {
-        int id PK
-        int user_id FK
-        int product_id FK
-    }
-```
-
 ---
 
 ## 2. Technical Deep-Dives (Focus Areas)
 
 ### A. AI Integration: RAG-based Chatbot
 **What it is**: An AI assistant that knows your product inventory.
-- **Implementation**: [RagService.java](../../backend/src/main/java/com/superdupermart/shopping/service/RagService.java)
-- **Talking Points**:
-    - **Vector Search**: "I used Spring AI to ingest the product catalog into a vector store at startup (`@PostConstruct`)."
-    - **Context Injection**: "The chatbot doesn't just hallucinate; it performs a similarity search to find relevant products and injects them into the Gemini prompt."
-    - **Resiliency**: [GeminiServiceImpl.java](../../backend/src/main/java/com/superdupermart/shopping/service/impl/GeminiServiceImpl.java) features a **custom exponential backoff** to handle API rate limiting (429 errors).
+#### The Workflow (Mermaid)
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant A as API (Backend)
+    participant R as Redis (Vector DB)
+    participant G as Gemini (LLM)
+
+    Note over A,R: 1. Ingestion Phase (Startup)
+    A->>G: Send Product Descriptions
+    G-->>A: Return "Embeddings" (Vector Arrays)
+    A->>R: Save Vectors + Product Details
+
+    Note over U,G: 2. Retrieval Phase (Runtime)
+    U->>A: "Do you have red shoes?"
+    A->>G: Embed query "red shoes"
+    G-->>A: Vector [0.1, 0.8, -0.3...]
+    A->>R: Similarity Search (KNN)
+    R-->>A: Found: "Red Nike Air (Dist: 0.9)"
+
+    Note over U,G: 3. Generation Phase
+    A->>G: Prompt: "Context: {Red Nike Air}... User Q: {Do you have red shoes?}"
+    G-->>A: "Yes! We have the Red Nike Air in stock."
+    A-->>U: Final Answer
+```
+#### Key Code Steps
+1. **Ingestion**: [`RagService.java`](../../backend/src/main/java/com/superdupermart/shopping/service/RagService.java) -> `@PostConstruct` loads products into Redis.
+2. **Retrieval**: [`RagService.java`](../../backend/src/main/java/com/superdupermart/shopping/service/RagService.java) finds vectors mathematically close to the user query.
+3. **Generation**: We inject those product details into the Gemini prompt context.
 
 ### B. High Performance: Elasticsearch & Redis
 **What it is**: A dual-database strategy for speed and scale.
-- **Talking Points**:
-    - **Dual Storage**: "I use MySQL for ACiD-compliant orders, but implemented **Elasticsearch** for search. This allowed us to maintain **p95 latency sub-100ms** even with 500 concurrent users."
-    - **Event-Driven Sync**: "Updates to products are automatically synced to ES in [ProductServiceImpl.java](../../backend/src/main/java/com/superdupermart/shopping/service/impl/ProductServiceImpl.java)."
-    - **Aggressive Caching**: Show how you used Redis for product listings to offload the DB.
+#### The Workflow (Mermaid)
+```mermaid
+sequenceDiagram
+    participant U as User
+    participant A as API (Backend)
+    participant S as Service Layer
+    participant SQL as MySQL (Primary DB)
+    participant ES as Elasticsearch (Search Index)
+
+    Note over U,ES: 1. Indexing Phase (Write Path)
+    U->>A: "Update Product Price to $100"
+    A->>S: updateProduct()
+    S->>SQL: Save Entity (ACID Transaction)
+    S->>ES: save(ProductDocument)
+    Note right of ES: "Near Real-Time" Sync
+
+    Note over U,ES: 2. Search Phase (Read Path)
+    U->>A: "Search for 'runing shoes'"
+    A->>S: searchProducts("runing")
+    S->>ES: Fuzzy Match Query
+    ES-->>S: Found "Running Shoes" (Score: 1.2)
+    S-->>U: Return Results (Sub-100ms)
+```
+#### Key Code Steps
+1. **Indexing (Dual Write)**: [`ProductServiceImpl.java`](../../backend/src/main/java/com/superdupermart/shopping/service/impl/ProductServiceImpl.java) saves to MySQL *and* Elasticsearch.
+   - *Senior Note*: "I'd move this to CDC (Kafka) for better resilience in a larger system."
+2. **Searching**: [`ProductServiceImpl.java`](../../backend/src/main/java/com/superdupermart/shopping/service/impl/ProductServiceImpl.java) hits ES directly for sub-100ms fuzzy search.
 
 ### C. Scalability: Event-Driven Kafka
 **What it is**: Decoupling order placement from notifications.
