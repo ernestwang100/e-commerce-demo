@@ -216,6 +216,18 @@ We use [k6](https://k6.io/) for load testing. You can run the tests using Docker
 ### Prerequisite
 Ensure the application is running (`docker-compose up -d`).
 
+### Run Locally (via Docker)
+No need to install k6. Run this command in the project root:
+```bash
+docker run --rm -v "${PWD}:/src" -i grafana/k6 run /src/load_test.js -e BASE_URL=http://host.docker.internal:7070
+```
+
+### Run with Custom VUs (e.g., 10)
+Just add `-e VUS=10`:
+```bash
+docker run --rm -v "${PWD}:/src" -i grafana/k6 run /src/load_test.js -e BASE_URL=http://host.docker.internal:7070 -e VUS=10
+```
+
 ### Run the Test (on VM)
 This script simulates user activity (Login -> Browse Products).
 

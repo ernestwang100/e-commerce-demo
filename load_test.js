@@ -7,7 +7,7 @@ export const options = {
 };
 
 export default function () {
-    const BASE_URL = 'http://localhost:7070';
+    const BASE_URL = __ENV.BASE_URL || 'http://localhost:7070';
 
     // 1. Login to get JWT
     const loginPayload = JSON.stringify({ username: 'admin', password: '123' });
