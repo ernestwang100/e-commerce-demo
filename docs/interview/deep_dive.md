@@ -3,7 +3,7 @@
 Use these snippets to explain *how* you implemented the core features.
 
 ## 1. AI RAG Pipeline: Vector Indexing & Hybrid Redis
-[RagService.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/service/RagService.java) / [VectorStoreConfig.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/config/VectorStoreConfig.java)
+[RagService.java](../../backend/src/main/java/com/superdupermart/shopping/service/RagService.java) / [VectorStoreConfig.java](../../backend/src/main/java/com/superdupermart/shopping/config/VectorStoreConfig.java)
 
 ```java
 // Logic inside VectorStoreConfig.java
@@ -21,7 +21,7 @@ public VectorStore vectorStore(EmbeddingClient embeddingClient) {
 ---
 
 ## 2. Resilience: Exponential Backoff for AI
-[GeminiServiceImpl.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/service/impl/GeminiServiceImpl.java)
+[GeminiServiceImpl.java](../../backend/src/main/java/com/superdupermart/shopping/service/impl/GeminiServiceImpl.java)
 
 ```java
 // Logic to handle 429 Too Many Requests
@@ -43,7 +43,7 @@ while (retryCount <= maxRetries) {
 ---
 
 ## 3. High Performance: Redis Caching & ES Sync
-[ProductServiceImpl.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/service/impl/ProductServiceImpl.java)
+[ProductServiceImpl.java](../../backend/src/main/java/com/superdupermart/shopping/service/impl/ProductServiceImpl.java)
 
 ```java
 @Cacheable(value = "products", key = "#isAdmin")
@@ -65,7 +65,7 @@ public ProductResponse updateProduct(Integer id, ProductRequest request) {
 ---
 
 ## 4. Advanced Discovery: Elasticsearch Mapping
-[ProductDocument.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/document/ProductDocument.java) / [ProductSearchRepository.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/repository/ProductSearchRepository.java)
+[ProductDocument.java](../../backend/src/main/java/com/superdupermart/shopping/document/ProductDocument.java) / [ProductSearchRepository.java](../../backend/src/main/java/com/superdupermart/shopping/repository/ProductSearchRepository.java)
 
 ```java
 @Document(indexName = "products")
@@ -85,7 +85,7 @@ public class ProductDocument {
 ---
 
 ## 5. Event-Driven Messaging: Kafka (Producer & Consumer)
-[OrderServiceImpl.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/service/impl/OrderServiceImpl.java) / [NotificationService.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/service/NotificationService.java)
+[OrderServiceImpl.java](../../backend/src/main/java/com/superdupermart/shopping/service/impl/OrderServiceImpl.java) / [NotificationService.java](../../backend/src/main/java/com/superdupermart/shopping/service/NotificationService.java)
 
 - **Producer**: `kafkaTemplate.send("orders", message);`
 - **Consumer**: 
@@ -100,7 +100,7 @@ public void listen(String message) {
 ---
 
 ## 6. Transaction Atomicity
-[OrderServiceImpl.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/service/impl/OrderServiceImpl.java)
+[OrderServiceImpl.java](../../backend/src/main/java/com/superdupermart/shopping/service/impl/OrderServiceImpl.java)
 
 ```java
 @Transactional
@@ -116,7 +116,7 @@ public OrderResponse placeOrder(Integer userId, OrderRequest request) {
 ---
 
 ## 7. Security Architecture: The Filter Chain
-[SecurityConfig.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/security/SecurityConfig.java)
+[SecurityConfig.java](../../backend/src/main/java/com/superdupermart/shopping/security/SecurityConfig.java)
 
 ```java
 @Bean
@@ -137,7 +137,7 @@ public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 ---
 
 ## 8. Role-Based Access Control (RBAC): The Flow
-[JwtFilter.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/security/JwtFilter.java) / [JwtProvider.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/security/JwtProvider.java)
+[JwtFilter.java](../../backend/src/main/java/com/superdupermart/shopping/security/JwtFilter.java) / [JwtProvider.java](../../backend/src/main/java/com/superdupermart/shopping/security/JwtProvider.java)
 
 ```java
 // Inside JwtFilter.java
@@ -152,7 +152,7 @@ if (user.isPresent()) {
 ---
 
 ## 9. Cross-Cutting Concerns: AOP Logging
-[LoggingAspect.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/aop/LoggingAspect.java)
+[LoggingAspect.java](../../backend/src/main/java/com/superdupermart/shopping/aop/LoggingAspect.java)
 
 ```java
 @Around("execution(* com.superdupermart.shopping.controller.*.*(..))")
@@ -169,7 +169,7 @@ public Object logExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
 ---
 
 ## 10. System Architecture: Docker Orchestration
-[docker-compose.yml](file:///d:/00_Projects/e-commerce-demo/docker-compose.yml)
+[docker-compose.yml](../../docker-compose.yml)
 
 ```yaml
 services:
@@ -187,7 +187,7 @@ services:
 ---
 
 ## 11. Robustness: Global Exception Handling
-[GlobalExceptionHandler.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/exception/GlobalExceptionHandler.java)
+[GlobalExceptionHandler.java](../../backend/src/main/java/com/superdupermart/shopping/exception/GlobalExceptionHandler.java)
 
 ```java
 @ControllerAdvice
@@ -203,7 +203,7 @@ public class GlobalExceptionHandler {
 ---
 
 ## 12. Frontend: Modular Angular Architecture
-[app-routing.module.ts](file:///d:/00_Projects/e-commerce-demo/frontend/src/app/app-routing.module.ts)
+[app-routing.module.ts](../../frontend/src/app/app-routing.module.ts)
 
 ```typescript
 const routes: Routes = [
@@ -216,7 +216,7 @@ const routes: Routes = [
 ---
 
 ## 13. Backend Architecture: Controller-Service-DAO
-[OrderController.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/controller/OrderController.java) / [OrderServiceImpl.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/service/impl/OrderServiceImpl.java) / [OrderDaoImpl.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/dao/impl/OrderDaoImpl.java)
+[OrderController.java](../../backend/src/main/java/com/superdupermart/shopping/controller/OrderController.java) / [OrderServiceImpl.java](../../backend/src/main/java/com/superdupermart/shopping/service/impl/OrderServiceImpl.java) / [OrderDaoImpl.java](../../backend/src/main/java/com/superdupermart/shopping/dao/impl/OrderDaoImpl.java)
 
 ```mermaid
 graph TD
@@ -229,7 +229,7 @@ graph TD
 ---
 
 ## 14. Persistence Strategy: Plain JPA & EntityManager
-[OrderDaoImpl.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/dao/impl/OrderDaoImpl.java)
+[OrderDaoImpl.java](../../backend/src/main/java/com/superdupermart/shopping/dao/impl/OrderDaoImpl.java)
 
 ```java
 @Repository
@@ -247,7 +247,7 @@ public class OrderDaoImpl implements OrderDao {
 ---
 
 ## 15. Clean APIs: DTO vs. Entity Mapping
-[OrderServiceImpl.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/service/impl/OrderServiceImpl.java)
+[OrderServiceImpl.java](../../backend/src/main/java/com/superdupermart/shopping/service/impl/OrderServiceImpl.java)
 
 ```java
 // Logic inside mapToResponse

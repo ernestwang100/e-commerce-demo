@@ -99,17 +99,17 @@ erDiagram
 
 ### A. AI Integration: RAG-based Chatbot
 **What it is**: An AI assistant that knows your product inventory.
-- **Implementation**: [RagService.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/service/RagService.java)
+- **Implementation**: [RagService.java](../../backend/src/main/java/com/superdupermart/shopping/service/RagService.java)
 - **Talking Points**:
     - **Vector Search**: "I used Spring AI to ingest the product catalog into a vector store at startup (`@PostConstruct`)."
     - **Context Injection**: "The chatbot doesn't just hallucinate; it performs a similarity search to find relevant products and injects them into the Gemini prompt."
-    - **Resiliency**: [GeminiServiceImpl.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/service/impl/GeminiServiceImpl.java) features a **custom exponential backoff** to handle API rate limiting (429 errors).
+    - **Resiliency**: [GeminiServiceImpl.java](../../backend/src/main/java/com/superdupermart/shopping/service/impl/GeminiServiceImpl.java) features a **custom exponential backoff** to handle API rate limiting (429 errors).
 
 ### B. High Performance: Elasticsearch & Redis
 **What it is**: A dual-database strategy for speed and scale.
 - **Talking Points**:
     - **Dual Storage**: "I use MySQL for ACiD-compliant orders, but implemented **Elasticsearch** for search. This allowed us to maintain **p95 latency sub-100ms** even with 500 concurrent users."
-    - **Event-Driven Sync**: "Updates to products are automatically synced to ES in [ProductServiceImpl.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/service/impl/ProductServiceImpl.java)."
+    - **Event-Driven Sync**: "Updates to products are automatically synced to ES in [ProductServiceImpl.java](../../backend/src/main/java/com/superdupermart/shopping/service/impl/ProductServiceImpl.java)."
     - **Aggressive Caching**: Show how you used Redis for product listings to offload the DB.
 
 ### C. Scalability: Event-Driven Kafka
@@ -120,7 +120,7 @@ erDiagram
 
 ### D. Security: Stateless Authentication & RBAC
 **What it is**: Secure, scalable user management without server-side sessions.
-- **Implementation**: [SecurityConfig.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/security/SecurityConfig.java) / [JwtFilter.java](file:///d:/00_Projects/e-commerce-demo/backend/src/main/java/com/superdupermart/shopping/security/JwtFilter.java)
+- **Implementation**: [SecurityConfig.java](../../backend/src/main/java/com/superdupermart/shopping/security/SecurityConfig.java) / [JwtFilter.java](../../backend/src/main/java/com/superdupermart/shopping/security/JwtFilter.java)
 - **Talking Points**:
     - **Statelessness**: "I implemented **JWT authentication** to keep the backend stateless. This is critical for horizontal scaling, as any server instance can validate a request without sharing session state."
     - **RBAC Enforcement**: "Access is controlled via **Role-Based Access Control**. The `JwtFilter` extracts roles from the token, and the `SecurityFilterChain` enforces strict boundaries—for example, only users with `ROLE_ADMIN` can access inventory management."
@@ -158,7 +158,7 @@ erDiagram
 ### 🛠️ Environment Ready
 - **Docker Compose**: Have it running (`docker-compose up -d`).
 - **Postman/Swagger**: Have the `/products/search` and `/chat` endpoints bookmarked.
-- **K6 Logs**: If they ask about performance, have the `k6` output ready or the [load_test.js](file:///d:/00_Projects/e-commerce-demo/tests/k6/load_test.js) file open.
+- **K6 Logs**: If they ask about performance, have the `k6` output ready or the [load_test.js](../../tests/k6/load_test.js) file open.
 
 ### 🎤 The Narrative Curve
 1. **The Problem**: "Standard DB searches are too slow for large catalogs."
