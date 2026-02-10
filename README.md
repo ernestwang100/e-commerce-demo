@@ -216,18 +216,27 @@ We use [k6](https://k6.io/) for load testing. You can run the tests using Docker
 ### Prerequisite
 Ensure the application is running (`docker-compose up -d`).
 
-### Run the Test
-This script simulates a ramp-up to **500 concurrent users** over 3 minutes.
+### Run the Test (on VM)
+This script simulates user activity (Login -> Browse Products).
 
 ```bash
-# Run k6 via Docker (Windows/Linux/Mac)
-docker run --rm -i --network="host" grafana/k6 run -e BASE_URL=http://localhost:7070 - < tests/k6/load_test.js
+# 1. SSH into the VM
+gcloud compute ssh shopping-vm
+
+# 2. Navigate to project directory
+cd e-commerce-demo
+
+# 3. Run the load test script (Default 10 VUs)
+../k6-v0.47.0-linux-amd64/k6 run load_test.js
+
+# Option: Set custom VUs (e.g., 50)
+../k6-v0.47.0-linux-amd64/k6 run -e VUS=50 load_test.js
 ```
 
 ### Interpretation
-- **http_req_duration**: The total time for the request. Look at `p(95)` (95th percentile).
-- **checks**: Success rate of requests (should be 100%).
-- **vus**: Number of Virtual Users (concurrency).
+- **http_req_duration**: Total request time. Look at `p(95)` (95th percentile).
+- **checks**: Success rate (should be 100%).
+- **vus**: Number of Virtual Users.
 
 ## 📝 License
 
