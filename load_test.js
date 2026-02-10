@@ -14,11 +14,16 @@ export default function () {
     const params = {
         headers: {
             'Content-Type': 'application/json',
-            'User-Agent': 'k6-load-test',
-            'Origin': 'http://localhost:4200'
+            'User-Agent': 'k6-load-test'
         }
     };
     const loginRes = http.post(`${BASE_URL}/api/auth/login`, loginPayload, params);
+
+    if (loginRes.status !== 200) {
+        console.error('Login failed: ' + loginRes.status + ' ' + loginRes.body);
+        sleep(1);
+        return;
+    }
 
     const token = loginRes.json('token');
 
