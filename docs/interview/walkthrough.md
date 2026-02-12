@@ -131,6 +131,7 @@ sequenceDiagram
 **What it is**: 6+ services running in harmony via Docker.
 - **Talking Points**: 
     - **Service Orchestration**: "I used `depends_on` with `healthchecks` to ensure reliable boot sequences."
+    - **Host Environment**: "I deployed this on a **Google Compute Engine (GCE) VM**, not App Engine. Why? Because running a stateful stack (MySQL + Redis + ES + Kafka) via Docker Compose is much cheaper and more controllable on a raw VM than configuring 5 separate managed services on App Engine Flex."
     - **Resource Management**: "Specifically tuned JVM and ES memory settings in the Compose file for the target VM."
 
 ### F. API Design: Error Handling & Standardization
