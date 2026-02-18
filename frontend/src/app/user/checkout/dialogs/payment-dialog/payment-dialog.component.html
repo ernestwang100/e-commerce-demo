@@ -1,0 +1,32 @@
+<h2 mat-dialog-title>{{ isEdit ? 'Edit Payment Method' : 'Add New Card' }}</h2>
+<mat-dialog-content class="dialog-content">
+  <form class="payment-form">
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Card Holder Name</mat-label>
+      <input matInput [(ngModel)]="paymentMethod.cardHolder" name="cardHolder" required>
+    </mat-form-field>
+
+    <div class="form-row">
+       <mat-form-field appearance="fill">
+         <mat-label>Card Type</mat-label>
+         <input matInput [(ngModel)]="paymentMethod.cardType" name="cardType" placeholder="Visa">
+       </mat-form-field>
+       <mat-form-field appearance="fill">
+         <mat-label>Expiry (MM/YY)</mat-label>
+         <input matInput [(ngModel)]="paymentMethod.expiryDate" name="expiry" placeholder="MM/YY" required>
+       </mat-form-field>
+    </div>
+
+    <mat-form-field appearance="fill" class="full-width">
+       <mat-label>Last 4 Digits (Demo Only)</mat-label>
+       <input matInput [(ngModel)]="paymentMethod.last4" name="last4" maxlength="4" required>
+       <mat-hint>Enter 4 digits needed for demo</mat-hint>
+    </mat-form-field>
+    
+    <mat-checkbox [(ngModel)]="paymentMethod.isDefault" name="default">Set as default payment method</mat-checkbox>
+  </form>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSave()" [disabled]="!isValid()">Save</button>
+</mat-dialog-actions>
