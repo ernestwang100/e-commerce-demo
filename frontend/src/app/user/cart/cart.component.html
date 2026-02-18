@@ -78,7 +78,7 @@
         <button mat-button (click)="clearCart()">Clear Cart</button>
         <button mat-button (click)="continueShopping()">Continue Shopping</button>
         <button mat-raised-button color="primary" 
-                routerLink="/user/payment"
+                routerLink="/user/checkout"
                 [disabled]="processing">
           <mat-icon *ngIf="!processing">payment</mat-icon>
           <mat-spinner *ngIf="processing" diameter="20"></mat-spinner>

@@ -7,6 +7,7 @@ import { OrderHistoryComponent } from './order-history/order-history.component';
 import { WatchlistComponent } from './watchlist/watchlist.component';
 import { ProfileComponent } from './profile/profile.component';
 import { PaymentComponent } from './payment/payment.component';
+import { CheckoutComponent } from './checkout/checkout.component';
 
 const routes: Routes = [
   { path: '', component: DashboardComponent },
@@ -14,6 +15,7 @@ const routes: Routes = [
   { path: 'products/:id', component: ProductDetailComponent },
   { path: 'cart', component: CartComponent },
   { path: 'payment', component: PaymentComponent },
+  { path: 'checkout', component: CheckoutComponent },
   { path: 'orders', component: OrderHistoryComponent },
   { path: 'watchlist', component: WatchlistComponent }
 ];

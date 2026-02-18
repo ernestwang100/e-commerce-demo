@@ -15,6 +15,8 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatInputModule } from '@angular/material/input';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatRadioModule } from '@angular/material/radio';
+import { MatCheckboxModule } from '@angular/material/checkbox';
 import { FormsModule } from '@angular/forms';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { CartComponent } from './cart/cart.component';
@@ -22,6 +24,7 @@ import { OrderHistoryComponent } from './order-history/order-history.component';
 import { WatchlistComponent } from './watchlist/watchlist.component';
 import { ProfileComponent } from './profile/profile.component';
 import { PaymentComponent } from './payment/payment.component';
+import { CheckoutComponent } from './checkout/checkout.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +34,8 @@ import { PaymentComponent } from './payment/payment.component';
     OrderHistoryComponent,
     WatchlistComponent,
     ProfileComponent,
-    PaymentComponent
+    PaymentComponent,
+    CheckoutComponent
   ],
   imports: [
     CommonModule,
@@ -46,7 +50,9 @@ import { PaymentComponent } from './payment/payment.component';
     MatProgressSpinnerModule,
     MatInputModule,
     MatSnackBarModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatRadioModule,
+    MatCheckboxModule
   ]
 })
 export class UserModule { }
