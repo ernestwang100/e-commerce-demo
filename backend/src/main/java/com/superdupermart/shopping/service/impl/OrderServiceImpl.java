@@ -1,6 +1,8 @@
 package com.superdupermart.shopping.service.impl;
 
+import com.superdupermart.shopping.dao.AddressDao;
 import com.superdupermart.shopping.dao.OrderDao;
+import com.superdupermart.shopping.dao.PaymentMethodDao;
 import com.superdupermart.shopping.dao.ProductDao;
 import com.superdupermart.shopping.dao.UserDao;
 import com.superdupermart.shopping.dto.OrderItemRequest;
@@ -8,8 +10,10 @@ import com.superdupermart.shopping.dto.OrderItemResponse;
 import com.superdupermart.shopping.dto.OrderRequest;
 import com.superdupermart.shopping.dto.OrderResponse;
 import com.superdupermart.shopping.dto.PageResponse; // Import
+import com.superdupermart.shopping.entity.Address;
 import com.superdupermart.shopping.entity.Order;
 import com.superdupermart.shopping.entity.OrderItem;
+import com.superdupermart.shopping.entity.PaymentMethod;
 import com.superdupermart.shopping.entity.Product;
 import com.superdupermart.shopping.entity.User;
 import com.superdupermart.shopping.exception.NotEnoughInventoryException;
@@ -37,17 +41,21 @@ public class OrderServiceImpl implements OrderService {
         private final KafkaTemplate<String, String> kafkaTemplate;
         private final EmailService emailService;
         private final PaymentService paymentService;
+        private final AddressDao addressDao;
+        private final PaymentMethodDao paymentMethodDao;
 
         @Autowired
         public OrderServiceImpl(OrderDao orderDao, ProductDao productDao, UserDao userDao,
                         KafkaTemplate<String, String> kafkaTemplate, EmailService emailService,
-                        PaymentService paymentService) {
+                        PaymentService paymentService, AddressDao addressDao, PaymentMethodDao paymentMethodDao) {
                 this.orderDao = orderDao;
                 this.productDao = productDao;
                 this.userDao = userDao;
                 this.kafkaTemplate = kafkaTemplate;
                 this.emailService = emailService;
                 this.paymentService = paymentService;
+                this.addressDao = addressDao;
+                this.paymentMethodDao = paymentMethodDao;
         }
 
         @Override
@@ -61,7 +69,39 @@ public class OrderServiceImpl implements OrderService {
                                 .datePlaced(LocalDateTime.now())
                                 .orderStatus("Processing")
                                 .items(new ArrayList<>())
+                                .isPickup(request.getIsPickup() != null ? request.getIsPickup() : false)
                                 .build();
+
+                // Handle Shipping Address
+                if (!order.getIsPickup()) {
+                        if (request.getAddressId() != null) {
+                                Address address = addressDao.findById(request.getAddressId())
+                                                .orElseThrow(() -> new RuntimeException("Address not found"));
+                                order.setShippingAddress(address);
+                        } else if (request.getNewAddress() != null) {
+                                Address newAddress = request.getNewAddress();
+                                newAddress.setUser(user);
+                                addressDao.save(newAddress);
+                                order.setShippingAddress(newAddress);
+                        } else {
+                                throw new RuntimeException("Shipping address is required for delivery");
+                        }
+                }
+
+                // Handle Payment Method
+                if (request.getPaymentMethodId() != null) {
+                        PaymentMethod paymentMethod = paymentMethodDao.findById(request.getPaymentMethodId())
+                                        .orElseThrow(() -> new RuntimeException("Payment method not found"));
+                        order.setPaymentMethod(paymentMethod);
+                } else if (request.getNewPaymentMethod() != null) {
+                        PaymentMethod newPaymentMethod = request.getNewPaymentMethod();
+                        newPaymentMethod.setUser(user);
+                        paymentMethodDao.save(newPaymentMethod);
+                        order.setPaymentMethod(newPaymentMethod);
+                } else {
+                        // For now allow null payment method if not provided (maybe generic payment)
+                        // logic for standard checkout
+                }
 
                 double totalAmount = 0.0;
 

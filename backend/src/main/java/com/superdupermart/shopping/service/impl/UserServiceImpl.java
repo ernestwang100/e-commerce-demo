@@ -19,11 +19,17 @@ public class UserServiceImpl implements UserService {
 
     private final UserDao userDao;
     private final PasswordEncoder passwordEncoder;
+    private final com.superdupermart.shopping.dao.AddressDao addressDao;
+    private final com.superdupermart.shopping.dao.PaymentMethodDao paymentMethodDao;
 
     @Autowired
-    public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserDao userDao, PasswordEncoder passwordEncoder,
+            com.superdupermart.shopping.dao.AddressDao addressDao,
+            com.superdupermart.shopping.dao.PaymentMethodDao paymentMethodDao) {
         this.userDao = userDao;
         this.passwordEncoder = passwordEncoder;
+        this.addressDao = addressDao;
+        this.paymentMethodDao = paymentMethodDao;
     }
 
     @Override
@@ -83,5 +89,33 @@ public class UserServiceImpl implements UserService {
     private User getUserByUsername(String username) {
         return userDao.findByUsername(username)
                 .orElseThrow(() -> new UsernameNotFoundException("User not found: " + username));
+    }
+
+    @Override
+    public java.util.List<com.superdupermart.shopping.entity.Address> getAddresses(String username) {
+        User user = getUserByUsername(username);
+        return addressDao.findByUser(user);
+    }
+
+    @Override
+    @Transactional
+    public void addAddress(String username, com.superdupermart.shopping.entity.Address address) {
+        User user = getUserByUsername(username);
+        address.setUser(user);
+        addressDao.save(address);
+    }
+
+    @Override
+    public java.util.List<com.superdupermart.shopping.entity.PaymentMethod> getPaymentMethods(String username) {
+        User user = getUserByUsername(username);
+        return paymentMethodDao.findByUser(user);
+    }
+
+    @Override
+    @Transactional
+    public void addPaymentMethod(String username, com.superdupermart.shopping.entity.PaymentMethod paymentMethod) {
+        User user = getUserByUsername(username);
+        paymentMethod.setUser(user);
+        paymentMethodDao.save(paymentMethod);
     }
 }
