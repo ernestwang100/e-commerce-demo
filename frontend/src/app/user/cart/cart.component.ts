@@ -7,6 +7,7 @@ import { CartService } from '../../services/cart.service';
 import { OrderService } from '../../services/order.service';
 import { AuthService } from '../../services/auth.service';
 import { OrderRequest } from '../../models/order.model';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-cart',
@@ -17,6 +18,7 @@ export class CartComponent implements OnInit, OnDestroy {
   cartItems: CartItem[] = [];
   displayedColumns = ['product', 'price', 'quantity', 'subtotal', 'actions'];
   processing = false;
+  apiUrl = environment.apiUrl;
   private cartSubscription: Subscription | null = null;
 
   constructor(

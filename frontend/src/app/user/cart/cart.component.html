@@ -17,7 +17,9 @@
         <td mat-cell *matCellDef="let item">
           <div class="product-cell">
             <div class="product-image">
-              <mat-icon>inventory_2</mat-icon>
+              <img *ngIf="item.product.image" [src]="'data:' + item.product.imageContentType + ';base64,' + item.product.image" [alt]="item.product.name" class="cart-product-img">
+              <img *ngIf="!item.product.image && item.product.imageContentType" [src]="apiUrl + '/products/' + item.product.id + '/image'" [alt]="item.product.name" class="cart-product-img">
+              <mat-icon *ngIf="!item.product.image && !item.product.imageContentType">inventory_2</mat-icon>
             </div>
             <span class="product-name">{{ item.product.name }}</span>
           </div>
