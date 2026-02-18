@@ -17,6 +17,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatDialogModule } from '@angular/material/dialog';
 import { FormsModule } from '@angular/forms';
 import { ProductDetailComponent } from './product-detail/product-detail.component';
 import { CartComponent } from './cart/cart.component';
@@ -25,6 +26,8 @@ import { WatchlistComponent } from './watchlist/watchlist.component';
 import { ProfileComponent } from './profile/profile.component';
 import { PaymentComponent } from './payment/payment.component';
 import { CheckoutComponent } from './checkout/checkout.component';
+import { AddressDialogComponent } from './checkout/dialogs/address-dialog/address-dialog.component';
+import { PaymentDialogComponent } from './checkout/dialogs/payment-dialog/payment-dialog.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +38,9 @@ import { CheckoutComponent } from './checkout/checkout.component';
     WatchlistComponent,
     ProfileComponent,
     PaymentComponent,
-    CheckoutComponent
+    CheckoutComponent,
+    AddressDialogComponent,
+    PaymentDialogComponent
   ],
   imports: [
     CommonModule,
@@ -52,7 +57,9 @@ import { CheckoutComponent } from './checkout/checkout.component';
     MatSnackBarModule,
     MatPaginatorModule,
     MatRadioModule,
-    MatCheckboxModule
+    MatRadioModule,
+    MatCheckboxModule,
+    MatDialogModule
   ]
 })
 export class UserModule { }

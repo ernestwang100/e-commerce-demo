@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog } from '@angular/material/dialog';
 import { CartService } from '../../services/cart.service';
 import { OrderService } from '../../services/order.service';
 import { UserService } from '../../services/user.service';
@@ -9,6 +10,8 @@ import { Address } from '../../models/address.model';
 import { PaymentMethod } from '../../models/payment.model';
 import { OrderRequest, OrderItemRequest } from '../../models/order.model';
 import { environment } from 'src/environments/environment';
+import { AddressDialogComponent } from './dialogs/address-dialog/address-dialog.component';
+import { PaymentDialogComponent } from './dialogs/payment-dialog/payment-dialog.component';
 
 @Component({
   selector: 'app-checkout',
@@ -25,28 +28,10 @@ export class CheckoutComponent implements OnInit {
   isPickup: boolean = false;
   addresses: Address[] = [];
   selectedAddressId: number | null = null;
-  newAddress: Address = {
-    fullName: '',
-    addressLine1: '',
-    city: '',
-    state: '',
-    zipCode: '',
-    country: '',
-    isDefault: false
-  };
-  showNewAddressForm: boolean = false;
 
   // Payment
   paymentMethods: PaymentMethod[] = [];
   selectedPaymentMethodId: number | null = null;
-  newPaymentMethod: PaymentMethod = {
-    cardHolder: '',
-    cardType: 'Visa',
-    last4: '',
-    expiryDate: '',
-    isDefault: false
-  };
-  showNewPaymentForm: boolean = false;
 
   processing: boolean = false;
 
@@ -55,7 +40,8 @@ export class CheckoutComponent implements OnInit {
     private orderService: OrderService,
     private userService: UserService,
     private router: Router,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog
   ) { }
 
   ngOnInit(): void {
@@ -73,46 +59,72 @@ export class CheckoutComponent implements OnInit {
   loadUserData(): void {
     this.userService.getAddresses().subscribe(data => {
       this.addresses = data;
-      // Select default if exists
-      const def = data.find(a => a.isDefault);
-      if (def && def.id) this.selectedAddressId = def.id;
+      // Select default if exists and not already selected
+      if (!this.selectedAddressId) {
+        const def = data.find(a => a.isDefault);
+        if (def && def.id) this.selectedAddressId = def.id;
+      }
     });
 
     this.userService.getPaymentMethods().subscribe(data => {
       this.paymentMethods = data;
-      const def = data.find(p => p.isDefault);
-      if (def && def.id) this.selectedPaymentMethodId = def.id;
+      if (!this.selectedPaymentMethodId) {
+        const def = data.find(p => p.isDefault);
+        if (def && def.id) this.selectedPaymentMethodId = def.id;
+      }
     });
   }
 
-  toggleNewAddress(show: boolean): void {
-    this.showNewAddressForm = show;
-    if (show) this.selectedAddressId = null;
+  openAddressDialog(address?: Address): void {
+    const dialogRef = this.dialog.open(AddressDialogComponent, {
+      width: '500px',
+      data: address ? { ...address } : null
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.userService.addAddress(result).subscribe(() => {
+          this.snackBar.open('Address saved successfully', 'Close', { duration: 3000 });
+          this.loadUserData();
+        });
+      }
+    });
   }
 
-  toggleNewPayment(show: boolean): void {
-    this.showNewPaymentForm = show;
-    if (show) this.selectedPaymentMethodId = null;
+  openPaymentDialog(payment?: PaymentMethod): void {
+    const dialogRef = this.dialog.open(PaymentDialogComponent, {
+      width: '500px',
+      data: payment ? { ...payment } : null
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.userService.addPaymentMethod(result).subscribe(() => {
+          this.snackBar.open('Payment method saved successfully', 'Close', { duration: 3000 });
+          this.loadUserData();
+        });
+      }
+    });
+  }
+
+  selectAddress(id: number | undefined): void {
+    if (id) this.selectedAddressId = id;
+  }
+
+  selectPayment(id: number | undefined): void {
+    if (id) this.selectedPaymentMethodId = id;
   }
 
   placeOrder(): void {
     if (!this.isPickup) {
-      if (!this.selectedAddressId && !this.showNewAddressForm) {
+      if (!this.selectedAddressId) {
         this.snackBar.open('Please select a shipping address', 'Close', { duration: 3000 });
-        return;
-      }
-      if (this.showNewAddressForm && !this.isValidAddress(this.newAddress)) {
-        this.snackBar.open('Please fill in valid address details', 'Close', { duration: 3000 });
         return;
       }
     }
 
-    if (!this.selectedPaymentMethodId && !this.showNewPaymentForm) {
+    if (!this.selectedPaymentMethodId) {
       this.snackBar.open('Please select a payment method', 'Close', { duration: 3000 });
-      return;
-    }
-    if (this.showNewPaymentForm && !this.isValidPayment(this.newPaymentMethod)) {
-      this.snackBar.open('Please fill in valid payment details', 'Close', { duration: 3000 });
       return;
     }
 
@@ -128,9 +140,7 @@ export class CheckoutComponent implements OnInit {
       order: orderItems,
       isPickup: this.isPickup,
       addressId: this.isPickup ? undefined : (this.selectedAddressId || undefined),
-      newAddress: (this.isPickup || this.selectedAddressId) ? undefined : this.newAddress,
-      paymentMethodId: this.selectedPaymentMethodId || undefined,
-      newPaymentMethod: this.selectedPaymentMethodId ? undefined : this.newPaymentMethod
+      paymentMethodId: this.selectedPaymentMethodId || undefined
     };
 
     this.orderService.placeOrder(request).subscribe({
@@ -146,13 +156,5 @@ export class CheckoutComponent implements OnInit {
         this.snackBar.open(err.error?.message || 'Failed to place order', 'Close', { duration: 3000 });
       }
     });
-  }
-
-  isValidAddress(addr: Address): boolean {
-    return !!addr.fullName && !!addr.addressLine1 && !!addr.city && !!addr.state && !!addr.zipCode && !!addr.country;
-  }
-
-  isValidPayment(pay: PaymentMethod): boolean {
-    return !!pay.cardHolder && !!pay.last4 && !!pay.expiryDate;
   }
 }

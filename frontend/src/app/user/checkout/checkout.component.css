@@ -4,8 +4,9 @@
     margin: 0 auto;
 }
 
-h1 {
-    margin-bottom: 24px;
+h1,
+h3 {
+    margin-bottom: 16px;
     color: #333;
 }
 
@@ -19,7 +20,7 @@ h1 {
     flex: 2;
     display: flex;
     flex-direction: column;
-    gap: 24px;
+    gap: 32px;
 }
 
 .order-summary {
@@ -35,28 +36,69 @@ h1 {
     gap: 20px;
 }
 
-.vertical-radio-group {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-}
-
-.checkout-form {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    margin-top: 16px;
-}
-
-.form-row {
-    display: flex;
+/* Card Grid Layout */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
     gap: 16px;
 }
 
-.form-row mat-form-field {
-    flex: 1;
+.selectable-card {
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all 0.2s ease;
 }
 
+.selectable-card:hover {
+    background-color: #f9f9f9;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.selectable-card.selected {
+    border-color: #3f51b5;
+    /* Primary Color */
+    background-color: #e8eaf6;
+}
+
+.card-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.add-new-card {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 2px dashed #ccc;
+    background-color: #fafafa;
+    min-height: 150px;
+    transition: all 0.2s ease;
+}
+
+.add-new-card:hover {
+    border-color: #3f51b5;
+    background-color: #f0f0f0;
+}
+
+.add-new-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    color: #666;
+}
+
+.add-new-content mat-icon {
+    font-size: 32px;
+    height: 32px;
+    width: 32px;
+}
+
+/* Summary Styles */
 .summary-card {
     position: sticky;
     top: 24px;
@@ -71,6 +113,8 @@ h1 {
     justify-content: space-between;
     margin-bottom: 8px;
     color: #555;
+    padding-bottom: 8px;
+    border-bottom: 1px solid #eee;
 }
 
 .summary-total {
