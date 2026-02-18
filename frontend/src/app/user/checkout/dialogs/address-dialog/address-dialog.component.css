@@ -1,0 +1,25 @@
+.dialog-content {
+    min-width: 400px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.address-form {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.full-width {
+    width: 100%;
+}
+
+.form-row {
+    display: flex;
+    gap: 16px;
+}
+
+.form-row mat-form-field {
+    flex: 1;
+}
