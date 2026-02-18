@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
+import { Address } from '../models/address.model';
+import { PaymentMethod } from '../models/payment.model';
 
 export interface UserProfile {
     id: number;
@@ -44,5 +46,21 @@ export class UserService {
 
     getProfilePictureBlob(): Observable<Blob> {
         return this.http.get(`${this.apiUrl}/picture`, { responseType: 'blob' });
+    }
+
+    getAddresses(): Observable<Address[]> {
+        return this.http.get<Address[]>(`${this.apiUrl}/addresses`);
+    }
+
+    addAddress(address: Address): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/addresses`, address);
+    }
+
+    getPaymentMethods(): Observable<PaymentMethod[]> {
+        return this.http.get<PaymentMethod[]>(`${this.apiUrl}/payment-methods`);
+    }
+
+    addPaymentMethod(paymentMethod: PaymentMethod): Observable<void> {
+        return this.http.post<void>(`${this.apiUrl}/payment-methods`, paymentMethod);
     }
 }

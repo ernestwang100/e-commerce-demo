@@ -3,8 +3,16 @@ export interface OrderItemRequest {
     quantity: number;
 }
 
+import { Address } from './address.model';
+import { PaymentMethod } from './payment.model';
+
 export interface OrderRequest {
     order: OrderItemRequest[];
+    addressId?: number;
+    newAddress?: Address;
+    isPickup: boolean;
+    paymentMethodId?: number;
+    newPaymentMethod?: PaymentMethod;
 }
 
 export interface OrderItemResponse {
