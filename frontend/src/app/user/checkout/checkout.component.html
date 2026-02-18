@@ -1,0 +1,148 @@
+<div class="checkout-container">
+  <h1>Checkout</h1>
+
+  <div class="checkout-content">
+    
+    <!-- Left Column: Forms -->
+    <div class="checkout-forms">
+      
+      <!-- Delivery Method -->
+      <mat-card class="section-card">
+        <mat-card-header>
+          <mat-card-title>Delivery Method</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <mat-radio-group [(ngModel)]="isPickup" (change)="toggleNewAddress(false)" class="radio-group">
+            <mat-radio-button [value]="false">Shipping</mat-radio-button>
+            <mat-radio-button [value]="true">Pickup</mat-radio-button>
+          </mat-radio-group>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Shipping Address (Hidden if Pickup) -->
+      <mat-card class="section-card" *ngIf="!isPickup">
+        <mat-card-header>
+          <mat-card-title>Shipping Address</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div *ngIf="addresses.length > 0" class="saved-addresses">
+             <mat-radio-group [(ngModel)]="selectedAddressId" (change)="toggleNewAddress(false)" class="vertical-radio-group">
+                <mat-radio-button *ngFor="let addr of addresses" [value]="addr.id">
+                  <span class="address-text">{{addr.fullName}}, {{addr.addressLine1}}, {{addr.city}}</span>
+                </mat-radio-button>
+                <mat-radio-button [value]="null" (click)="toggleNewAddress(true)">Add New Address</mat-radio-button>
+             </mat-radio-group>
+          </div>
+          <div *ngIf="addresses.length === 0 || showNewAddressForm" class="new-address-form">
+             <h3>New Address Details</h3>
+             <form class="checkout-form">
+               <mat-form-field appearance="fill">
+                 <mat-label>Full Name</mat-label>
+                 <input matInput [(ngModel)]="newAddress.fullName" name="fullName" required>
+               </mat-form-field>
+
+               <mat-form-field appearance="fill">
+                 <mat-label>Address Line 1</mat-label>
+                 <input matInput [(ngModel)]="newAddress.addressLine1" name="addr1" required>
+               </mat-form-field>
+
+               <mat-form-field appearance="fill">
+                 <mat-label>City</mat-label>
+                 <input matInput [(ngModel)]="newAddress.city" name="city" required>
+               </mat-form-field>
+
+               <div class="form-row">
+                 <mat-form-field appearance="fill">
+                   <mat-label>State</mat-label>
+                   <input matInput [(ngModel)]="newAddress.state" name="state" required>
+                 </mat-form-field>
+                 <mat-form-field appearance="fill">
+                   <mat-label>Zip Code</mat-label>
+                   <input matInput [(ngModel)]="newAddress.zipCode" name="zip" required>
+                 </mat-form-field>
+               </div>
+
+               <mat-form-field appearance="fill">
+                 <mat-label>Country</mat-label>
+                 <input matInput [(ngModel)]="newAddress.country" name="country" required>
+               </mat-form-field>
+             </form>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Payment Method -->
+      <mat-card class="section-card">
+        <mat-card-header>
+          <mat-card-title>Payment Method</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+           <div *ngIf="paymentMethods.length > 0" class="saved-payments">
+             <mat-radio-group [(ngModel)]="selectedPaymentMethodId" (change)="toggleNewPayment(false)" class="vertical-radio-group">
+                <mat-radio-button *ngFor="let pm of paymentMethods" [value]="pm.id">
+                  {{pm.cardType}} ending in {{pm.last4}} (Exp: {{pm.expiryDate}})
+                </mat-radio-button>
+                <mat-radio-button [value]="null" (click)="toggleNewPayment(true)">Add New Card</mat-radio-button>
+             </mat-radio-group>
+           </div>
+           <div *ngIf="paymentMethods.length === 0 || showNewPaymentForm" class="new-payment-form">
+              <h3>New Card Details</h3>
+              <form class="checkout-form">
+                <mat-form-field appearance="fill">
+                  <mat-label>Card Holder Name</mat-label>
+                  <input matInput [(ngModel)]="newPaymentMethod.cardHolder" name="cardHolder" required>
+                </mat-form-field>
+                
+                <div class="form-row">
+                   <mat-form-field appearance="fill">
+                     <mat-label>Card Type</mat-label>
+                     <input matInput [(ngModel)]="newPaymentMethod.cardType" name="cardType" placeholder="Visa/MasterCard">
+                   </mat-form-field>
+                   <mat-form-field appearance="fill">
+                     <mat-label>Expiry (MM/YY)</mat-label>
+                     <input matInput [(ngModel)]="newPaymentMethod.expiryDate" name="expiry" placeholder="MM/YY" required>
+                   </mat-form-field>
+                </div>
+
+                <mat-form-field appearance="fill">
+                   <mat-label>Last 4 Digits (Demo)</mat-label>
+                   <input matInput [(ngModel)]="newPaymentMethod.last4" name="last4" maxlength="4" required>
+                   <mat-hint>Enter 4 digits needed for demo</mat-hint>
+                </mat-form-field>
+              </form>
+           </div>
+        </mat-card-content>
+      </mat-card>
+
+    </div>
+
+    <!-- Right Column: Order Summary -->
+    <div class="order-summary">
+       <mat-card class="summary-card">
+         <mat-card-header>
+           <mat-card-title>Order Summary</mat-card-title>
+         </mat-card-header>
+         <mat-card-content>
+           <div class="summary-items">
+             <div *ngFor="let item of cartItems" class="summary-item">
+               <span>{{item.product.name}} (x{{item.quantity}})</span>
+               <span>${{(item.product.retailPrice * item.quantity) | number:'1.2-2'}}</span>
+             </div>
+           </div>
+           <hr>
+           <div class="summary-total">
+             <strong>Total</strong>
+             <strong>${{totalAmount | number:'1.2-2'}}</strong>
+           </div>
+         </mat-card-content>
+         <mat-card-actions>
+            <button mat-raised-button color="primary" class="place-order-btn" (click)="placeOrder()" [disabled]="processing">
+              <mat-spinner *ngIf="processing" diameter="20"></mat-spinner>
+              <span *ngIf="!processing">Place Order</span>
+            </button>
+         </mat-card-actions>
+       </mat-card>
+    </div>
+
+  </div>
+</div>
