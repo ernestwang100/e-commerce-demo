@@ -12,4 +12,9 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderRequest {
     private List<OrderItemRequest> order;
+    private Integer addressId;
+    private com.superdupermart.shopping.entity.Address newAddress;
+    private Boolean isPickup;
+    private Integer paymentMethodId;
+    private com.superdupermart.shopping.entity.PaymentMethod newPaymentMethod;
 }
