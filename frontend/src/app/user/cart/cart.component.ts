@@ -52,6 +52,20 @@ export class CartComponent implements OnInit, OnDestroy {
     this.snackBar.open('Item removed from cart', 'Close', { duration: 2000 });
   }
 
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    img.style.display = 'none';
+    const parent = img.parentElement;
+    if (parent) {
+      const icon = document.createElement('mat-icon');
+      icon.className = 'mat-icon notranslate material-icons mat-icon-no-color';
+      icon.textContent = 'inventory_2';
+      icon.style.color = 'white';
+      icon.style.fontSize = '24px';
+      parent.appendChild(icon);
+    }
+  }
+
   clearCart(): void {
     this.cartService.clearCart();
     this.snackBar.open('Cart cleared', 'Close', { duration: 2000 });
