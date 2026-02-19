@@ -92,7 +92,8 @@ export class CartComponent implements OnInit, OnDestroy {
       order: this.cartItems.map(item => ({
         productId: item.product.id,
         quantity: item.quantity
-      }))
+      })),
+      isPickup: false
     };
 
     this.orderService.placeOrder(orderRequest).subscribe({

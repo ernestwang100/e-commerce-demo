@@ -46,7 +46,8 @@ export class PaymentComponent implements OnInit {
             order: items.map(item => ({
                 productId: item.product.id,
                 quantity: item.quantity
-            }))
+            })),
+            isPickup: false
         };
 
         this.orderService.placeOrder(orderRequest).subscribe({
