@@ -27,4 +27,21 @@ export interface OrderResponse {
     datePlaced: string;
     orderStatus: string;
     items: OrderItemResponse[];
+    userId?: number;
+    customerUsername?: string;
+    customerEmail?: string;
+    isPickup?: boolean;
+    shippingAddress?: {
+        fullName: string;
+        addressLine1: string;
+        addressLine2?: string;
+        city: string;
+        state: string;
+        zipCode: string;
+        country: string;
+    };
+    paymentMethod?: {
+        cardType: string;
+        last4Digits: string;
+    };
 }

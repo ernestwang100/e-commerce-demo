@@ -224,11 +224,39 @@ public class OrderServiceImpl implements OrderService {
                                                 .build())
                                 .collect(Collectors.toList());
 
+                OrderResponse.AddressInfo addressInfo = null;
+                if (Boolean.TRUE.equals(order.getIsPickup()) == false && order.getShippingAddress() != null) {
+                        Address addr = order.getShippingAddress();
+                        addressInfo = OrderResponse.AddressInfo.builder()
+                                        .fullName(addr.getFullName())
+                                        .addressLine1(addr.getAddressLine1())
+                                        .addressLine2(addr.getAddressLine2())
+                                        .city(addr.getCity())
+                                        .state(addr.getState())
+                                        .zipCode(addr.getZipCode())
+                                        .country(addr.getCountry())
+                                        .build();
+                }
+
+                OrderResponse.PaymentInfo paymentInfo = null;
+                if (order.getPaymentMethod() != null) {
+                        paymentInfo = OrderResponse.PaymentInfo.builder()
+                                        .cardType(order.getPaymentMethod().getCardType())
+                                        .last4Digits(order.getPaymentMethod().getLast4())
+                                        .build();
+                }
+
                 return OrderResponse.builder()
                                 .orderId(order.getId())
                                 .datePlaced(order.getDatePlaced())
                                 .orderStatus(order.getOrderStatus())
                                 .items(itemResponses)
+                                .userId(order.getUser().getId())
+                                .customerUsername(order.getUser().getUsername())
+                                .customerEmail(order.getUser().getEmail())
+                                .isPickup(Boolean.TRUE.equals(order.getIsPickup()))
+                                .shippingAddress(addressInfo)
+                                .paymentMethod(paymentInfo)
                                 .build();
         }
 }

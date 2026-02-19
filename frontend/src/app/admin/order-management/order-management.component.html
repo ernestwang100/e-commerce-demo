@@ -26,9 +26,35 @@
       <td mat-cell *matCellDef="let order">{{ order.items.length }}</td>
     </ng-container>
 
+    <ng-container matColumnDef="customer">
+      <th mat-header-cell *matHeaderCellDef>Customer</th>
+      <td mat-cell *matCellDef="let order">
+        <div>{{ order.customerUsername }}</div>
+        <div class="email-sub">{{ order.customerEmail }}</div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="method">
+      <th mat-header-cell *matHeaderCellDef>Method</th>
+      <td mat-cell *matCellDef="let order">
+        <div class="method-badge" [class.pickup]="order.isPickup" [class.delivery]="!order.isPickup">
+          <mat-icon>{{ order.isPickup ? 'store' : 'local_shipping' }}</mat-icon>
+          <span>{{ order.isPickup ? 'Pickup' : 'Delivery' }}</span>
+        </div>
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="payment">
+      <th mat-header-cell *matHeaderCellDef>Payment</th>
+      <td mat-cell *matCellDef="let order">
+        <div *ngIf="order.paymentMethod">{{ order.paymentMethod.cardType }} *{{ order.paymentMethod.last4Digits }}</div>
+        <div *ngIf="!order.paymentMethod">-</div>
+      </td>
+    </ng-container>
+
     <ng-container matColumnDef="total">
       <th mat-header-cell *matHeaderCellDef>Total</th>
-      <td mat-cell *matCellDef="let order">${{ getOrderTotal(order) | number:'1.2-2' }}</td>
+      <td mat-cell *matCellDef="let order"><strong>${{ getOrderTotal(order) | number:'1.2-2' }}</strong></td>
     </ng-container>
 
     <ng-container matColumnDef="status">
@@ -63,13 +89,61 @@
   </table>
 
   <!-- Expanded Order Details -->
-  <div *ngIf="expandedOrderId" class="order-details">
+  <div *ngIf="expandedOrderId" class="order-details-container">
     <ng-container *ngFor="let order of orders">
-      <mat-card *ngIf="order.orderId === expandedOrderId">
-        <mat-card-header>
-          <mat-card-title>Order #{{ order.orderId }} Details</mat-card-title>
-        </mat-card-header>
-        <mat-card-content>
+      <div *ngIf="order.orderId === expandedOrderId" class="order-detail-card">
+        
+        <div class="detail-header">
+          <h3>Order #{{ order.orderId }} Details</h3>
+          <span class="status-badge" [ngClass]="getStatusClass(order.orderStatus)">{{ order.orderStatus }}</span>
+        </div>
+
+        <div class="detail-grid">
+          <!-- Customer Info -->
+          <div class="detail-section">
+            <h4>Customer</h4>
+            <div class="info-row">
+              <mat-icon>person</mat-icon>
+              <span>{{ order.customerUsername }}</span>
+            </div>
+            <div class="info-row">
+              <mat-icon>email</mat-icon>
+              <span>{{ order.customerEmail }}</span>
+            </div>
+          </div>
+
+          <!-- Delivery Info -->
+          <div class="detail-section">
+            <h4>Delivery Method</h4>
+            <div class="info-row">
+              <mat-icon>{{ order.isPickup ? 'store' : 'local_shipping' }}</mat-icon>
+              <span>{{ order.isPickup ? 'Store Pickup' : 'Home Delivery' }}</span>
+            </div>
+            <div *ngIf="!order.isPickup && order.shippingAddress" class="address-box">
+              <p><strong>{{ order.shippingAddress.fullName }}</strong></p>
+              <p>{{ order.shippingAddress.addressLine1 }}</p>
+              <p *ngIf="order.shippingAddress.addressLine2">{{ order.shippingAddress.addressLine2 }}</p>
+              <p>{{ order.shippingAddress.city }}, {{ order.shippingAddress.state }} {{ order.shippingAddress.zipCode }}</p>
+              <p>{{ order.shippingAddress.country }}</p>
+            </div>
+          </div>
+
+          <!-- Payment Info -->
+          <div class="detail-section">
+            <h4>Payment</h4>
+            <div class="info-row" *ngIf="order.paymentMethod">
+              <mat-icon>credit_card</mat-icon>
+              <span>{{ order.paymentMethod.cardType }} ending in ****{{ order.paymentMethod.last4Digits }}</span>
+            </div>
+            <div class="info-row" *ngIf="!order.paymentMethod">
+              <mat-icon>money_off</mat-icon>
+              <span>No payment method recorded</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="items-section">
+          <h4>Items Ordered</h4>
           <table class="items-table">
             <thead>
               <tr>
@@ -89,13 +163,14 @@
             </tbody>
             <tfoot>
               <tr>
-                <td colspan="3"><strong>Total</strong></td>
-                <td><strong>${{ getOrderTotal(order) | number:'1.2-2' }}</strong></td>
+                <td colspan="3" class="total-label"><strong>Total</strong></td>
+                <td class="total-value"><strong>${{ getOrderTotal(order) | number:'1.2-2' }}</strong></td>
               </tr>
             </tfoot>
           </table>
-        </mat-card-content>
-      </mat-card>
+        </div>
+
+      </div>
     </ng-container>
   </div>
 

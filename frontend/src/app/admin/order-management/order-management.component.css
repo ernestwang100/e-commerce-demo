@@ -105,3 +105,138 @@ h1 {
     background-color: #ff9800 !important;
     color: white !important;
 }
+
+/* New Styles for Enhanced Order Details */
+.email-sub {
+    font-size: 0.8rem;
+    color: #666;
+}
+
+.method-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    border-radius: 16px;
+    font-size: 0.85rem;
+    font-weight: 500;
+}
+
+.method-badge mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+}
+
+.method-badge.pickup {
+    background-color: #e3f2fd;
+    color: #1565c0;
+}
+
+.method-badge.delivery {
+    background-color: #f3e5f5;
+    color: #7b1fa2;
+}
+
+/* Expanded Details Styling */
+.order-details-container {
+    padding: 16px;
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #ddd;
+}
+
+.order-detail-card {
+    background: white;
+    border-radius: 8px;
+    padding: 24px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.detail-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #eee;
+}
+
+.detail-header h3 {
+    margin: 0;
+    color: #1a1a2e;
+    font-size: 1.4rem;
+}
+
+.status-badge {
+    padding: 6px 12px;
+    border-radius: 4px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 32px;
+    margin-bottom: 32px;
+}
+
+.detail-section h4 {
+    color: #666;
+    font-size: 0.9rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 16px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 8px;
+    display: inline-block;
+}
+
+.info-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+    color: #333;
+    font-size: 1rem;
+}
+
+.info-row mat-icon {
+    color: #666;
+}
+
+.address-box {
+    background: #f9f9f9;
+    padding: 16px;
+    border-radius: 8px;
+    border: 1px solid #eee;
+    margin-top: 12px;
+}
+
+.address-box p {
+    margin: 4px 0;
+    color: #444;
+    line-height: 1.4;
+}
+
+.items-section {
+    margin-top: 24px;
+}
+
+.items-section h4 {
+    color: #1a1a2e;
+    margin-bottom: 16px;
+}
+
+.total-label {
+    text-align: right;
+    padding-right: 24px;
+    font-size: 1.1rem;
+}
+
+.total-value {
+    font-size: 1.2rem;
+    color: #2e7d32;
+    font-weight: 700;
+}
