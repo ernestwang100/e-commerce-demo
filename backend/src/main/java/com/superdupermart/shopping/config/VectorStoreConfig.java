@@ -19,6 +19,7 @@ public class VectorStoreConfig {
     private String prefix;
 
     @Bean
+    @org.springframework.boot.autoconfigure.condition.ConditionalOnProperty(name = "spring.ai.vectorstore.redis.enabled", havingValue = "true", matchIfMissing = true)
     public VectorStore vectorStore(EmbeddingClient embeddingClient) {
         org.springframework.ai.vectorstore.RedisVectorStore.RedisVectorStoreConfig config = org.springframework.ai.vectorstore.RedisVectorStore.RedisVectorStoreConfig
                 .builder()
