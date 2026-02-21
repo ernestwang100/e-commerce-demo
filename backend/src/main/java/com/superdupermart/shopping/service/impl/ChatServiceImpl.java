@@ -9,6 +9,7 @@ import com.superdupermart.shopping.service.ChatService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -23,7 +24,7 @@ public class ChatServiceImpl implements ChatService {
     private final AIService aiService;
 
     @Autowired
-    public ChatServiceImpl(ChatMessageDao chatMessageDao, AIService aiService) {
+    public ChatServiceImpl(ChatMessageDao chatMessageDao, @Qualifier("vertexService") AIService aiService) {
         this.chatMessageDao = chatMessageDao;
         this.aiService = aiService;
     }
